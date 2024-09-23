@@ -29,6 +29,11 @@ const ArambhEvent = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleRegisterClick = () => {
+    const formLink = "https://docs.google.com/forms/d/e/1FAIpQLSd1qJ5jFgtGPoXuNDG8RK5r7y9gRJJfiUJKK38UYW4zdv8SWg/viewform?usp=pp_url"; // Replace with your actual Google Form link
+    window.open(formLink, "_blank");
+  };
+
   return (
     <div className="hero-section2" style={{ backgroundImage: "url('/images/Arambh-Workshop.png')" }}>
       <div className="overlay"></div>
@@ -37,7 +42,7 @@ const ArambhEvent = () => {
         <p className="subtitle">Join Us for an Exciting Workshop</p>
         <h1 className="title">Arambh <br /> <span>A Workshop by Students, for Students</span></h1>
         <p className="details">September 28, 2024 | Venue TBD</p>
-        <button className="register-btn">Register Now</button>
+        <button className="register-btn" onClick={handleRegisterClick}>Register Now</button>
         <div className="countdown">
           <div className="time-box">
             <span>{timeLeft.days}</span>
