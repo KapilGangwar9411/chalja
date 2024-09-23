@@ -1081,24 +1081,39 @@ nav ul li a:hover {
 
 
 
-/* events page styling */
+
+
+/* Events Page  */
+
 .my-events-page {
   padding: 50px;
   text-align: center;
   background: linear-gradient(to right, #e0eafc, #cfdef3);
   min-height: 100vh;
+  position: relative;
 }
 
-/* Stylish heading */
+/* Section heading styling */
 .my-events-page h1 {
   font-family: Anton;
   font-size: 3rem;
-  margin-bottom: 40px;
+  margin: 40px 0 20px;
   color: #333;
   position: relative;
   display: inline-block;
+  transition: color 0.3s ease;
 }
 
+.my-events-page h1:hover {
+  color: #FF6347; /* Color change on hover */
+}
+
+/* Add some space between the two sections */
+.my-events-page .events-container {
+  margin-bottom: 40px;
+}
+
+/* Decorative line below heading */
 .my-events-page h1::after {
   content: "";
   position: absolute;
@@ -1123,13 +1138,13 @@ nav ul li a:hover {
 /* Glass effect card styling */
 .my-events-page .event-card {
   font-family: bricolage;
-  background: rgba(136, 75, 75, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
   width: 100%;
   max-width: 350px;
   text-align: left;
@@ -1142,6 +1157,7 @@ nav ul li a:hover {
 /* Hover effect for the card */
 .my-events-page .event-card:hover {
   transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
 }
 
 /* Event image styling with hover effect */
@@ -1150,11 +1166,12 @@ nav ul li a:hover {
   height: 200px;
   object-fit: cover;
   border-radius: 10px;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, filter 0.3s ease; /* Added filter transition */
 }
 
 .my-events-page .event-card:hover .event-image {
   transform: scale(1.1);
+  filter: brightness(90%); /* Darken on hover */
 }
 
 /* Event details inside the card */
@@ -1166,6 +1183,11 @@ nav ul li a:hover {
   font-size: 1.5rem;
   color: #333;
   margin-bottom: 10px;
+  transition: color 0.3s ease; /* Color change on hover */
+}
+
+.my-events-page .event-details h2:hover {
+  color: #FF6347; /* Change color on hover */
 }
 
 .my-events-page .event-details .event-date {
@@ -1217,10 +1239,11 @@ nav ul li a:hover {
   }
 }
 
+/* Button styling */
 .event-buttons {
   display: flex;
-  justify-content: space-between; /* Space buttons evenly */
-  margin-top: 15px; /* Space between description and buttons */
+  justify-content: center; /* Center buttons */
+  margin-top: 15px;
 }
 
 .event-buttons button {
@@ -1230,13 +1253,15 @@ nav ul li a:hover {
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   color: #fff;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .event-buttons button:hover {
-  background: linear-gradient(135deg, #2575fc, #6a11cb); /* Change gradient direction */
-  transform: scale(1.05); /* Slight scale effect */
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Shadow on hover */
 }
+
 
 /* Events Section CSS Ends Here */
 
