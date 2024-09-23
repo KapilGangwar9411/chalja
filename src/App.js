@@ -7,6 +7,7 @@ import Events from './components/Events';
 import AboutFilmscreening from './components/About-Events/FimlScreening/AboutFilmscreening';
 import EventPopup from './components/Event-Popup/EventPopup';
 import ArambhEvent from './components/About-Events/Arambh/ArambhEvent';
+import LightsCameraDiwali from './components/About-Events/Lights-Camera-Diwali/LightsCameraDiwali';
 
 function App() {
   const [showPopup, setShowPopup] = useState(false);
@@ -36,6 +37,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/events/2" element={<AboutFilmscreening />} />
           <Route path="/events/1" element={<ArambhEvent />} />
+          <Route path="/events/3" element={<LightsCameraDiwali />} />
         </Routes>
       </Router>
       {showPopup && <EventPopup onClose={closePopup} />}

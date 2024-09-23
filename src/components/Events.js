@@ -26,10 +26,10 @@ const Events = () => {
   const pastEvents = [
     {
       id: 3,
-      title: "Director's Talk",
-      date: "December 5, 2023",
-      description: "An insightful talk with renowned filmmakers.",
-      image: "images/event3.png"
+      title: "Lights,Camera,Diwali",
+      date: "November 12, 2023",
+      description: "video making competition..",
+      image: "images/lcd-poster.png"
     },
     {
       id: 4,
