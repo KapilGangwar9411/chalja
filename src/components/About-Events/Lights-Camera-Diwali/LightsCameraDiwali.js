@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./LightsCameraDiwali.css";
 
 const LightsCameraDiwali = () => {
     const { id } = useParams();
+
+    // Scroll to top when component mounts
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <div className="hero-section" style={{ backgroundImage: "url('/images/post.jpg')" }}>
@@ -19,13 +24,16 @@ const LightsCameraDiwali = () => {
                 <section className="event-info-section fade-in">
                     <h2 className="info-title">Event Information</h2>
                     <p className="details">
-                        Celebrate the Festival of Lights with us on November 5, 2024! Join us for an evening filled with dazzling performances, delicious food, and joyful celebrations. 
-                        Don't miss the chance to capture the magic of Diwali with our special photography contest!
+                    Capture the magic of Diwali in a short video and share your unique story! 
+                    Showcase your creativity by filming the vibrant colours, heartwarming traditions, 
+                    or the joy of togetherness with your loved ones. Submit your video online and share 
+                    it with the entire community through the club's social media channels, allowing everyone 
+                    to virtually experience the festive spirit of Diwali!
                     </p>
                 </section>
 
                 <section className="video-section fade-in">
-                    <h2 className="title" >Event Highlights</h2>
+                    <h2 className="title">Event Highlights</h2>
                     <div className="video-container">
                         <iframe 
                             className="video-iframe" 
