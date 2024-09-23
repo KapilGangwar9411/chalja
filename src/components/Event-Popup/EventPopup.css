@@ -1,0 +1,161 @@
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.7));
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    max-width: 90%;
+    width: 450px;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.close-btn:hover {
+    transform: rotate(90deg);
+}
+
+.event-name {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0 0 10px;
+    animation: slideIn 0.5s ease;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+.event-description {
+    font-size: 18px;
+    margin: 10px 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.event-details {
+    font-size: 14px;
+    margin: 5px 0;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.countdown {
+    margin: 25px 0;
+    display: flex;
+    justify-content: space-around; /* Center items with equal space */
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 10px; /* Add some space between the time boxes */
+}
+
+.time-box {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 15px; /* Adjusted padding */
+    width: 70px; /* Width adjusted for better alignment */
+    text-align: center;
+    transition: transform 0.3s ease;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.time-box:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.time-box span {
+    display: block; /* Ensure the number is on a separate line */
+    font-size: 24px; /* Increase font size for better visibility */
+    font-weight: bold; /* Make the numbers bold */
+}
+
+.time-box p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Remove default margin */
+    font-size: 14px; /* Font size for the labels */
+    color: rgba(255, 255, 255, 0.8); /* Slightly lighter color */
+}
+
+.register-btn {
+    margin-top: 20px;
+    padding: 15px 35px;
+    border: none;
+    background: linear-gradient(90deg, #ff4081, #ff6f20);
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.register-btn:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(90deg, #ff6f20, #ff4081);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 500px) {
+    .popup-content {
+        padding: 30px;
+        width: 90%;
+    }
+    .event-name {
+        font-size: 24px;
+    }
+    .event-description {
+        font-size: 16px;
+    }
+    .register-btn {
+        padding: 10px 20px;
+        font-size: 18px;
+    }
+}
