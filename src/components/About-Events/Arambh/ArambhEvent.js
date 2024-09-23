@@ -30,7 +30,7 @@ const ArambhEvent = () => {
   }, []);
 
   return (
-    <div className="hero-section" style={{ backgroundImage: "url('/images/Arambh-Workshop.png')" }}>
+    <div className="hero-section2" style={{ backgroundImage: "url('/images/Arambh-Workshop.png')" }}>
       <div className="overlay"></div>
       <header className="navbar"></header>
       <div className="content">

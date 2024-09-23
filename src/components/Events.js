@@ -29,7 +29,7 @@ const Events = () => {
       title: "Lights,Camera,Diwali",
       date: "November 12, 2023",
       description: "video making competition..",
-      image: "images/lcd-poster.png"
+      image: "images/lcdposter.png"
     },
     {
       id: 4,

@@ -30,7 +30,7 @@ const AboutFilmscreening = () => {
   }, []);
   
   return (
-    <div className="hero-section" style={{ backgroundImage: "url('/images/background1.png')" }}>
+    <div className="hero-section3" style={{ backgroundImage: "url('/images/background1.png')" }}>
       <div className="overlay"></div>
       <header className="navbar">
       </header>
