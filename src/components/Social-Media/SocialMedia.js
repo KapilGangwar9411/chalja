@@ -22,7 +22,7 @@ const SocialMedia = () => {
 
   return (
     <div className="social-media-container">
-      <h1 className="title">Connect with Us</h1>
+      <h1 className="title2">Connect with Us!</h1>
       <div className="social-icons">
         {socialMediaLinks.map((social, index) => (
           <a
