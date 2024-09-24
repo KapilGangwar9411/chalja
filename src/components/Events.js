@@ -36,7 +36,7 @@ const Events = () => {
       title: "Night Photowalks",
       date: "4 March 20, 2023",
       description: "Capture the streets in Chaos.",
-      image: "images/photoWalks.png"
+      image: "images/PhotoWalks.png"
     },
     {
       id: 5,
