@@ -5,10 +5,9 @@ import About from './About';
 import TeamSection from './TeamSection';
 import JoinNowForm from './JoinNowForm';
 import Loader from './Loader';
-import Footer from './Footer';
 import MovingText from './MovingText';
 import EventsContainer from './EventsContainer';
-import EventPopup from './Event-Popup/EventPopup';
+import SocialMedia from './Social-Media/SocialMedia';
 
 const Home = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -41,7 +40,7 @@ const Home = () => {
       <EventsContainer />
       <TeamSection />
       <MovingText />
-      <Footer />
+      <SocialMedia />
     </div>
   );
 };

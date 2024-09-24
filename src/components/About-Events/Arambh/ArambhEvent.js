@@ -7,6 +7,9 @@ const ArambhEvent = () => {
   const [timeLeft, setTimeLeft] = useState({});
 
   useEffect(() => {
+    // Scroll to the top when the component mounts
+    window.scrollTo(0, 0);
+
     const countdownDate = new Date("September 28, 2024 00:00:00").getTime();
     const updateCountdown = () => {
       const now = new Date().getTime();

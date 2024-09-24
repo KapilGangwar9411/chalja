@@ -8,6 +8,7 @@ import AboutFilmscreening from './components/About-Events/FimlScreening/AboutFil
 import EventPopup from './components/Event-Popup/EventPopup';
 import ArambhEvent from './components/About-Events/Arambh/ArambhEvent';
 import LightsCameraDiwali from './components/About-Events/Lights-Camera-Diwali/LightsCameraDiwali';
+import Footer from './components/Footer';
 
 function App() {
   const [showPopup, setShowPopup] = useState(false);
@@ -15,7 +16,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPopup(true);
-    }, 3000); // Show popup after 5 seconds
+    }, 5000); // Show popup after 5 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -23,6 +24,7 @@ function App() {
   const closePopup = () => {
     setShowPopup(false);
   };
+
 
   // Log components to debug
   console.log('AboutFilmscreening:', AboutFilmscreening);
@@ -39,6 +41,7 @@ function App() {
           <Route path="/events/1" element={<ArambhEvent />} />
           <Route path="/events/3" element={<LightsCameraDiwali />} />
         </Routes>
+        <Footer />
       </Router>
       {showPopup && <EventPopup onClose={closePopup} />}
     </div>

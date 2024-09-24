@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/styles.css';
+import { Link } from 'react-router-dom';
 
 const Header = ({ openForm }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,7 +33,9 @@ const Header = ({ openForm }) => {
   return (
     <header id="main-header" className="header">
       <div className="logo-container">
-        <img src="images/black.png" alt="Spectrum Logo" className="logo" />
+      <Link to="/">
+          <img src="images/black.png" alt="Spectrum Logo" className="logo" />
+        </Link>
       </div>
       <nav>
         <ul className={`nav-links ${isMenuOpen ? 'show' : ''}`}>

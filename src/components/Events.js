@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/styles.css'; // Ensure this contains the animations
+import '../assets/styles.css';
 
 const Events = () => {
   const navigate = useNavigate();
@@ -10,15 +10,15 @@ const Events = () => {
       id: 1,
       title: "Arambh",
       date: "September 28, 2024",
-      description: "A workshop by students, for students.",
-      image: "images/event2.png"
+      description: "A workshop by the students, for the students.",
+      image: "images/workshop.png"
     },
     {
       id: 2,
       title: "Film Screening",
       date: "October 10, 2024",
-      description: "Join us for a screening of award-winning short films.",
-      image: "images/event1.png"
+      description: "Join us for a screening of short films.",
+      image: "images/filmscreening.png"
     },
     // Add other upcoming events here...
   ];
@@ -33,38 +33,38 @@ const Events = () => {
     },
     {
       id: 4,
-      title: "Editing Masterclass",
-      date: "January 20, 2023",
-      description: "Learn editing techniques from professionals.",
-      image: "images/event4.png"
+      title: "Night Photowalks",
+      date: "4 March 20, 2023",
+      description: "Capture the streets in Chaos.",
+      image: "images/photoWalks.png"
     },
     {
       id: 5,
-      title: "Editing Masterclass",
-      date: "January 20, 2023",
+      title: "Food Donations",
+      date: "January 26, 2023",
       description: "Learn editing techniques from professionals.",
-      image: "images/event4.png"
+      image: "images/fooddonation.png"
     },
     {
       id: 6,
-      title: "Editing Masterclass",
+      title: "Aarambh(Entrepreneurship Session)",
       date: "January 20, 2023",
       description: "Learn editing techniques from professionals.",
-      image: "images/event4.png"
+      image: "images/entreprenuer.png"
     },
     {
       id: 7,
-      title: "Editing Masterclass",
+      title: "Debug-e-Palooza",
       date: "January 20, 2023",
-      description: "Learn editing techniques from professionals.",
-      image: "images/event4.png"
+      description: "contribution through high-quality video recording and coverage",
+      image: "images/coding.png"
     },
     {
       id: 8,
-      title: "Editing Masterclass",
+      title: "Video Walks",
       date: "January 20, 2023",
       description: "Learn editing techniques from professionals.",
-      image: "images/event4.png"
+      image: "images/videowalks.png"
     },
     // Add other past events here...
   ];
