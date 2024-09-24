@@ -1,9 +1,11 @@
+// LightsCameraDiwali.js
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import "./LightsCameraDiwali.css";
 
 const LightsCameraDiwali = () => {
     const { id } = useParams();
+    const navigate = useNavigate(); // Initialize navigation
 
     // Scroll to top when component mounts
     useEffect(() => {
@@ -14,6 +16,8 @@ const LightsCameraDiwali = () => {
         <div className="hero-section" style={{ backgroundImage: "url('/images/post.jpg')" }}>
             <div className="overlay"></div>
             <header className="navbar"></header>
+
+            <button className="back-button" onClick={() => navigate(-1)}>Back</button> {/* Back Button */}
 
             <div className="content">
                 <section className="event-header fade-in">

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import "./ArambhEvent.css";
 
 const ArambhEvent = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // Initialize navigate
   const [timeLeft, setTimeLeft] = useState({});
 
   useEffect(() => {
@@ -37,10 +38,15 @@ const ArambhEvent = () => {
     window.open(formLink, "_blank");
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Navigate back to the previous page
+  };
+
   return (
     <div className="hero-section2" style={{ backgroundImage: "url('/images/Arambh-Workshop.png')" }}>
       <div className="overlay"></div>
       <header className="navbar"></header>
+      <button className="back-button" onClick={handleBackClick}>Back</button>
       <div className="content">
         <p className="subtitle">Join Us for an Exciting Workshop</p>
         <h1 className="title">Arambh <br /> <span>A Workshop by Students, for Students</span></h1>

@@ -26,16 +26,16 @@ const Events = () => {
   const pastEvents = [
     {
       id: 3,
-      title: "Lights,Camera,Diwali",
+      title: "Lights, Camera, Diwali",
       date: "November 12, 2023",
-      description: "video making competition..",
+      description: "Video making competition.",
       image: "images/lcdposter.png"
     },
     {
       id: 4,
       title: "Night Photowalks",
-      date: "4 March 20, 2023",
-      description: "Capture the streets in Chaos.",
+      date: "4 March 2023",
+      description: "Capture the streets in chaos.",
       image: "images/PhotoWalks.png"
     },
     {
@@ -47,7 +47,7 @@ const Events = () => {
     },
     {
       id: 6,
-      title: "Aarambh(Entrepreneurship Session)",
+      title: "Aarambh (Entrepreneurship Session)",
       date: "January 20, 2023",
       description: "Learn editing techniques from professionals.",
       image: "images/entreprenuer.png"
@@ -56,7 +56,7 @@ const Events = () => {
       id: 7,
       title: "Debug-e-Palooza",
       date: "January 20, 2023",
-      description: "contribution through high-quality video recording and coverage",
+      description: "Contribution through high-quality video recording and coverage.",
       image: "images/coding.png"
     },
     {
@@ -71,6 +71,8 @@ const Events = () => {
 
   return (
     <div className="my-events-page">
+      <button className="back-button" onClick={() => navigate(-1)}>Back</button> {/* Back Button */}
+      
       <h1>Upcoming Events</h1>
       <div className="events-container">
         {upcomingEvents.map((event) => (

@@ -88,6 +88,8 @@
     margin: auto; /* Ensure margin auto for better centering */
 }
 
+
+
 /* Animations */
 @keyframes fadeIn {
     from {
@@ -120,3 +122,5 @@
         padding: 10px; /* Less padding on smaller screens */
     }
 }
+
+

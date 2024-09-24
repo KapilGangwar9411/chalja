@@ -1,8 +1,12 @@
-// HeroSection.js
+// AboutFilmscreening.js
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import "./AboutFilmscreening.css";
 
 const AboutFilmscreening = () => {
+  // Initialize navigation
+  const navigate = useNavigate();
+  
   // Countdown logic
   const [timeLeft, setTimeLeft] = useState({});
   
@@ -35,6 +39,8 @@ const AboutFilmscreening = () => {
       <header className="navbar">
       </header>
       
+      <button className="back-button" onClick={() => navigate(-1)}>Back</button> {/* Back Button */}
+
       <div className="content">
         <p className="subtitle">Hurry Up! Battle Start Soon</p>
         <h1 className="title">Film Screening Festival <br /> <span>Cinematography Challenges</span></h1>
@@ -60,7 +66,6 @@ const AboutFilmscreening = () => {
         </div>
       </div>
     </div>
-    
   );
 };
 
