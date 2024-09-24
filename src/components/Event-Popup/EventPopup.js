@@ -11,7 +11,6 @@ const EventPopup = ({ onClose }) => {
     const oneHourInMilliseconds = 60 * 60 * 1000; // 1 hour = 3600000 ms
 
     if (!popupLastShown || (now - popupLastShown) > oneHourInMilliseconds) {
-      // Show popup if 1 hour has passed or it hasn't been shown before
       setTimeout(() => {
         setIsPopupVisible(true);
         localStorage.setItem('popupLastShown', now);  // Store current timestamp
@@ -20,7 +19,7 @@ const EventPopup = ({ onClose }) => {
   }, []);
 
   useEffect(() => {
-    const countdownDate = new Date("October 23, 2024 00:00:00").getTime();
+    const countdownDate = new Date("September 24, 2024 00:00:00").getTime();
     const updateCountdown = () => {
       const now = new Date().getTime();
       const distance = countdownDate - now;
@@ -47,17 +46,21 @@ const EventPopup = ({ onClose }) => {
     onClose();
   };
 
+  const handleRegister = () => {
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSd1qJ5jFgtGPoXuNDG8RK5r7y9gRJJfiUJKK38UYW4zdv8SWg/viewform?usp=pp_url', '_blank'); // Replace with your Google Form link
+  };
+
   if (!isPopupVisible) return null;
 
   return (
     <div className="popup-overlay" onClick={handleClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={handleClose}>&times;</button>
-        <h2 className="event-name">Exciting Film Festival</h2>
-        <p className="event-description">Join us for an incredible evening showcasing the best short films from emerging filmmakers.</p>
+        <h2 className="event-name">Aarambh: Workshop for the Students by the Students</h2>
+        <p className="event-description">Join us for an engaging workshop led by students, aimed at enhancing skills and fostering collaboration.</p>
         <p className="event-details">Date: October 23, 2024</p>
-        <p className="event-details">Time: 7:00 PM</p>
-        <p className="event-details">Venue: Spectrum Cinemas</p>
+        <p className="event-details">Time: 3:00 PM</p>
+        <p className="event-details">Venue: SFS Lab, NIET Greater Noida</p>
         <div className="countdown">
           <div className="time-box">
             <span>{timeLeft.days}</span>
@@ -76,7 +79,7 @@ const EventPopup = ({ onClose }) => {
             <p>Seconds</p>
           </div>
         </div>
-        <button className="register-btn">Register Now</button>
+        <button className="register-btn" onClick={handleRegister}>Register Now</button>
       </div>
     </div>
   );

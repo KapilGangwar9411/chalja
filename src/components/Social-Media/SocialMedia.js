@@ -5,7 +5,7 @@ const SocialMedia = () => {
   const socialMediaLinks = [
     {
       name: 'Instagram',
-      url: 'https://www.instagram.com',
+      url: 'https://www.instagram.com/niet_spectrum_club?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
       icon: '📸',
     },
     {

@@ -8,6 +8,7 @@ import Loader from './Loader';
 import MovingText from './MovingText';
 import EventsContainer from './EventsContainer';
 import SocialMedia from './Social-Media/SocialMedia';
+import LearningWithSpectrum from './Learnings/LearningWithSpectrum';
 
 const Home = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);

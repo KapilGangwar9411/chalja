@@ -1,11 +1,10 @@
-// LightsCameraDiwali.js
 import React, { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useParams, useNavigate } from "react-router-dom";
 import "./LightsCameraDiwali.css";
 
 const LightsCameraDiwali = () => {
     const { id } = useParams();
-    const navigate = useNavigate(); // Initialize navigation
+    const navigate = useNavigate(); // Initialize navigate
 
     // Scroll to top when component mounts
     useEffect(() => {
@@ -17,9 +16,10 @@ const LightsCameraDiwali = () => {
             <div className="overlay"></div>
             <header className="navbar"></header>
 
-            <button className="back-button" onClick={() => navigate(-1)}>Back</button> {/* Back Button */}
-
             <div className="content">
+                {/* Back Button */}
+                <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+
                 <section className="event-header fade-in">
                     <h1 className="title">Lights, Camera, Diwali!</h1>
                     <img src="/images/LightsCamera.png" alt="Lights Camera Diwali Poster" className="event-poster" />
@@ -28,11 +28,11 @@ const LightsCameraDiwali = () => {
                 <section className="event-info-section fade-in">
                     <h2 className="info-title">Event Information</h2>
                     <p className="details">
-                    Capture the magic of Diwali in a short video and share your unique story! 
-                    Showcase your creativity by filming the vibrant colours, heartwarming traditions, 
-                    or the joy of togetherness with your loved ones. Submit your video online and share 
-                    it with the entire community through the club's social media channels, allowing everyone 
-                    to virtually experience the festive spirit of Diwali!
+                        Capture the magic of Diwali in a short video and share your unique story!
+                        Showcase your creativity by filming the vibrant colours, heartwarming traditions,
+                        or the joy of togetherness with your loved ones. Submit your video online and share
+                        it with the entire community through the club's social media channels, allowing everyone
+                        to virtually experience the festive spirit of Diwali!
                     </p>
                 </section>
 

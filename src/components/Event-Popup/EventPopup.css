@@ -144,43 +144,37 @@
 }
 
 /* Media queries for responsiveness */
-@media (max-width: 500px) {
+@media (max-width: 600px) {
     .popup-content {
-        padding: 30px;
-        width: 90%;
+        width: 90%; /* Make the popup full width on smaller screens */
+        padding: 20px; /* Reduce padding for smaller devices */
     }
+
     .event-name {
-        font-size: 24px;
+        font-size: 22px; /* Adjust font size for smaller screens */
     }
-    .event-description {
-        font-size: 16px;
+
+    .event-description, .event-details, .time-box p {
+        font-size: 14px; /* Smaller font size for better readability */
     }
+
+    .time-box {
+        width: 60px; /* Reduce width for smaller screens */
+        padding: 10px; /* Adjust padding */
+    }
+
     .register-btn {
-        padding: 10px 20px;
-        font-size: 18px;
+        font-size: 18px; /* Adjust button font size */
+        padding: 12px 30px; /* Adjust button padding */
     }
 }
 
 @media (max-width: 400px) {
-    .close-btn {
-        font-size: 24px;
-        top: 10px;
-        right: 15px;
-    }
     .event-name {
-        font-size: 22px;
+        font-size: 20px; /* Further reduce font size */
     }
-    .event-description {
-        font-size: 15px;
-    }
-    .time-box {
-        width: 60px; /* Adjust width for smaller screens */
-    }
-    .time-box span {
-        font-size: 20px; /* Adjust font size */
-    }
+
     .register-btn {
-        padding: 8px 15px;
-        font-size: 16px;
+        padding: 10px 25px; /* Further reduce button size */
     }
 }
