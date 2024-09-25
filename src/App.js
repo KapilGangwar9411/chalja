@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './assets/styles.css';
 import Home from './components/Home';
-import ShortFilms from './components/ShortFilms';
+import ShortFilms from './components/Short-Films/shortfilms';
 import Events from './components/Events';
 import AboutFilmscreening from './components/About-Events/FimlScreening/AboutFilmscreening';
 import EventPopup from './components/Event-Popup/EventPopup';
@@ -41,7 +41,6 @@ function App() {
           <Route path="/events/1" element={<ArambhEvent />} />
           <Route path="/events/3" element={<LightsCameraDiwali />} />
         </Routes>
-        <Footer />
       </Router>
       {showPopup && <EventPopup onClose={closePopup} />}
     </div>

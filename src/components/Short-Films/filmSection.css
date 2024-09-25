@@ -1,0 +1,513 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #121212;
+    color: white;
+  }
+  
+
+  
+  .films-page-container {
+    text-align: center;
+    padding: 90px;
+  }
+
+  .films-section h1 {
+    font-family: Anton;
+    margin-bottom: 30px;
+    font-size: 3.5rem; /* Larger heading */
+  }
+  
+  .films-grid {
+    margin-top: 10%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 3 films per row */
+    gap: 5px; /* Bigger gap between the films */
+    justify-items: center; /* Centers the films horizontally */
+  }
+  
+  .film-card {
+    position: relative;
+    width: 280px; /* Bigger movie posters */
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 20px; /* Rounded corners */
+    overflow: hidden; /* Ensures image and hover effect stay within the rounded corners */
+  }
+  
+  .film-card img {
+    width: 100%;
+    height: 420px; /* 2:3 aspect ratio */
+    object-fit: cover;
+    border-radius: 20px;
+  }
+  
+  .film-card:hover {
+    transform: scale(1.2); /* Slightly bigger on hover */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5); /* Add shadow for more pop */
+  }
+  
+  .film-info {
+    font-family: bricolage;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85); /* Darker overlay on hover */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+  }
+  
+  .film-card:hover .film-info {
+    opacity: 1; /* Show the info on hover */
+  }
+  
+  .film-info h2 {
+    font-size: 1.8rem; /* Bigger title */
+    margin: 0 0 10px;
+    font-weight: bold;
+  }
+  
+  .film-info p {
+    margin: 5px 0;
+    font-size: 1rem; /* More readable text */
+  }
+
+  
+
+
+  /* Modal styling */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(10px); /* Adds glassmorphism blur effect */
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent overlay */
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards ease; /* Smooth fade-in */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    font-family: bricolage;
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background for glass effect */
+    backdrop-filter: blur(15px); /* Intensified blur for glass look */
+    padding: 40px;
+    border-radius: 20px;
+    width: 70%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Deep shadow for a floating effect */
+    transform: translateY(-50px);
+    animation: slideUp 0.5s forwards 0.2s ease; /* Smooth slide-up animation */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle glass-like border */
+  }
+  
+  /* Heading */
+  .modal-content h2 {
+    color: white;
+    text-align: center;
+    font-size: 2.5rem;
+    font-family: bricolage;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    background: -webkit-linear-gradient(45deg, #f09, #3023ae); /* Cool gradient text */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+  }
+  
+  /* Close Button */
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2.5rem;
+    color: #ff6b81;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .close:hover {
+    color: #ff3b6f;
+    transform: rotate(180deg) scale(1.2); /* Fun hover effect */
+  }
+  
+  /* Smooth animations */
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  /* Video Player */
+  .modal-content iframe {
+    width: 100%;
+    height: 420px;
+    border: none;
+    border-radius: 15px; /* Smooth rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+    transition: transform 0.3s ease;
+  }
+  
+  .modal-content iframe:hover {
+    transform: scale(1.05); /* Slight zoom on hover for interactivity */
+  }
+  
+  /* Button Styling */
+  .film-info button {
+    font-family: bricolage;
+    background: linear-gradient(45deg, #ff6b81, #ff6ba1); /* Modern gradient */
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 107, 129, 0.5); /* Button shadow for depth */
+  }
+  
+  .film-info button:hover {
+    background: linear-gradient(45deg, #ff3b6f, #ff6ba1); /* Brighter hover effect */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    box-shadow: 0 12px 25px rgba(255, 107, 129, 0.7);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .modal-content {
+      width: 90%;
+      padding: 20px;
+    }
+  
+    .modal-content h2 {
+      font-size: 1.8rem;
+    }
+  
+    .modal-content iframe {
+      height: 300px;
+    }
+  
+    .film-info button {
+      font-size: 1.1rem;
+      padding: 10px 20px;
+    }
+  }
+  
+  /* Additional subtle animation for opening effect */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 8px 20px rgba(255, 107, 129, 0.5);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 12px 30px rgba(255, 107, 129, 0.7);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 8px 20px rgba(255, 107, 129, 0.5);
+    }
+  }
+  
+  .film-info button {
+    animation: pulse 2s infinite; /* Pulsing animation for the button */
+  }
+  abody {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #121212;
+    color: white;
+  }
+  
+  .films-page-container {
+    text-align: center;
+    padding: 90px;
+  }
+  
+  .films-section h1 {
+    font-family: Anton;
+    margin-bottom: 30px;
+    font-size: 3.5rem; /* Larger heading */
+  }
+  
+  .films-grid {
+    margin-top: 10%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 films per row */
+    gap: 5px; /* Bigger gap between the films */
+    justify-items: center; /* Centers the films horizontally */
+  }
+  
+  .film-card {
+    position: relative;
+    width: 280px; /* Fixed width for larger screens */
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 20px; /* Rounded corners */
+    overflow: hidden; /* Ensures image and hover effect stay within the rounded corners */
+  }
+  
+  .film-card img {
+    width: 100%;
+    height: 420px; /* 2:3 aspect ratio */
+    object-fit: cover;
+    border-radius: 20px;
+  }
+  
+  .film-card:hover {
+    transform: scale(1.2); /* Slightly bigger on hover */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5); /* Add shadow for more pop */
+  }
+  
+  .film-info {
+    font-family: bricolage;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85); /* Darker overlay on hover */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+  }
+  
+  .film-card:hover .film-info {
+    opacity: 1; /* Show the info on hover */
+  }
+  
+  .film-info h2 {
+    font-size: 1.8rem; /* Bigger title */
+    margin: 0 0 10px;
+    font-weight: bold;
+  }
+  
+  .film-info p {
+    margin: 5px 0;
+    font-size: 1rem; /* More readable text */
+  }
+  
+  /* Modal styling */
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(10px); /* Adds glassmorphism blur effect */
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent overlay */
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards ease; /* Smooth fade-in */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    font-family: bricolage;
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent background for glass effect */
+    backdrop-filter: blur(15px); /* Intensified blur for glass look */
+    padding: 40px;
+    border-radius: 20px;
+    width: 70%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Deep shadow for a floating effect */
+    transform: translateY(-50px);
+    animation: slideUp 0.5s forwards 0.2s ease; /* Smooth slide-up animation */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle glass-like border */
+  }
+  
+  /* Heading */
+  .modal-content h2 {
+    color: white;
+    text-align: center;
+    font-size: 2.5rem;
+    font-family: bricolage;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    background: -webkit-linear-gradient(45deg, #f09, #3023ae); /* Cool gradient text */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Text shadow for depth */
+  }
+  
+  /* Close Button */
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2.5rem;
+    color: #ff6b81;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .close:hover {
+    color: #ff3b6f;
+    transform: rotate(180deg) scale(1.2); /* Fun hover effect */
+  }
+  
+  /* Smooth animations */
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  /* Video Player */
+  .modal-content iframe {
+    width: 100%;
+    height: 420px;
+    border: none;
+    border-radius: 15px; /* Smooth rounded corners */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+    transition: transform 0.3s ease;
+  }
+  
+  .modal-content iframe:hover {
+    transform: scale(1.05); /* Slight zoom on hover for interactivity */
+  }
+  
+  /* Button Styling */
+  .film-info button {
+    font-family: bricolage;
+    background: linear-gradient(45deg, #ff6b81, #ff6ba1); /* Modern gradient */
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 107, 129, 0.5); /* Button shadow for depth */
+  }
+  
+  .film-info button:hover {
+    background: linear-gradient(45deg, #ff3b6f, #ff6ba1); /* Brighter hover effect */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    box-shadow: 0 12px 25px rgba(255, 107, 129, 0.7);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .films-grid {
+      grid-template-columns: repeat(2, 1fr); /* 3 films per row */
+    }
+    .film-card {
+        width: 100%;
+        margin-top: 20%;
+    }
+    .films-section{
+        margin-top: 5%;
+    }
+
+  }
+  
+  @media (max-width: 768px) {
+    .films-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  
+    .film-card {
+      width: 160%;
+      margin-top: 30%;
+    }
+  
+    .modal-content {
+      width: 90%; /* Full width modal */
+      padding: 20px; /* Smaller padding */
+    }
+  
+    .modal-content h2 {
+      font-size: 1.8rem; /* Smaller heading */
+    }
+  
+    .modal-content iframe {
+      height: 300px; /* Smaller iframe */
+    }
+  
+    .film-info button {
+      font-size: 1.1rem; /* Smaller button font */
+      padding: 10px 20px; /* Smaller padding */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .films-section h1 {
+      font-size: 2.5rem; /* Smaller heading */
+    }
+  
+    .film-info h2 {
+      font-size: 1.5rem; /* Smaller title */
+    }
+  
+    .film-info p {
+      font-size: 0.9rem; /* Smaller text */
+    }
+  }
+  
+  /* Additional subtle animation for opening effect */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 8px 20px rgba(255, 107, 129, 0.5);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 12px 30px rgba(255, 107, 129, 0.7);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 8px 20px rgba(255, 107, 129, 0.5);
+    }
+  }
+  
+  .film-info button {
+    animation: pulse 2s infinite; /* Pulsing animation for the button */
+  }
+  
