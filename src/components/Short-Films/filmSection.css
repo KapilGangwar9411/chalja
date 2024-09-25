@@ -1,22 +1,25 @@
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #121212;
-    color: white;
-  }
-  
-
   
   .films-page-container {
     text-align: center;
-    padding: 90px;
+    
   }
 
   .films-section h1 {
+    color: #121212;
     font-family: Anton;
     margin-bottom: 30px;
-    font-size: 3.5rem; /* Larger heading */
-  }
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px; /* Add space between letters */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+.films-section h1:hover {
+    color: #ff6347; /* Change color on hover */
+    transform: scale(1.05); /* Slightly increase size on hover */
+}
+
   
   .films-grid {
     margin-top: 10%;
@@ -237,12 +240,6 @@ body {
   
   .film-info button {
     animation: pulse 2s infinite; /* Pulsing animation for the button */
-  }
-  abody {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #121212;
-    color: white;
   }
   
   .films-page-container {

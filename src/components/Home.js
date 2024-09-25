@@ -8,7 +8,7 @@ import Loader from './Loader';
 import MovingText from './MovingText';
 import EventsContainer from './EventsContainer';
 import SocialMedia from './Social-Media/SocialMedia';
-import LearningWithSpectrum from './Learnings/LearningWithSpectrum';
+import Footer from './Footer';
 
 const Home = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -42,6 +42,7 @@ const Home = () => {
       <TeamSection />
       <MovingText />
       <SocialMedia />
+      <Footer />
     </div>
   );
 };
