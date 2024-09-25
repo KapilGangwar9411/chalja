@@ -4,7 +4,7 @@ import './filmSection.css';
 const filmsData = [
   {
     title: 'Babli Bouncer',
-    image: `${process.env.PUBLIC_URL}/images/film1.png`,
+    image: `${process.env.PUBLIC_URL}/images/safar.png`,
     year: '2022',
     duration: '1h 57m',
     languages: '3 Languages',
@@ -14,7 +14,7 @@ const filmsData = [
   },
   {
     title: 'Sarabhai vs Sarabhai',
-    image: `${process.env.PUBLIC_URL}/images/film1.png`,
+    image: `${process.env.PUBLIC_URL}/images/safar.png`,
     year: '2004',
     duration: '2 Seasons',
     languages: 'Hindi',
@@ -24,7 +24,7 @@ const filmsData = [
   },
   {
     title: 'Kya Haal Mr. Panchaal?',
-    image: `${process.env.PUBLIC_URL}/images/film1.png`,
+    image: `${process.env.PUBLIC_URL}/images/safar.png`,
     year: '2017',
     duration: '1 Season',
     languages: 'Hindi',
@@ -34,7 +34,7 @@ const filmsData = [
   },
   {
     title: 'Kya Haal Mr. Panchaal?',
-    image: `${process.env.PUBLIC_URL}/images/film1.png`,
+    image: `${process.env.PUBLIC_URL}/images/safar.png`,
     year: '2017',
     duration: '1 Season',
     languages: 'Hindi',
