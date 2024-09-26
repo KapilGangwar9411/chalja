@@ -14,7 +14,9 @@ const ShortFilms = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Email submitted: ${email}`);
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSd1qJ5jFgtGPoXuNDG8RK5r7y9gRJJfiUJKK38UYW4zdv8SWg/viewform?usp=pp_url', '_blank');
+    // Optionally inform the user
+    alert('The Google Form has been opened in a new tab. Please fill it out and return here.');
   };
 
   useEffect(() => {
@@ -28,7 +30,9 @@ const ShortFilms = () => {
   return (
     <div>
       {!imageLoaded ? (
-        <div className="loading-spinner">Loading...</div>
+        <div className="loader">
+          <img src="images/lens.png" alt="Logo" className="loader-logo" />
+        </div>
       ) : (
         <div
           className="netflix-landing-container"
@@ -40,7 +44,7 @@ const ShortFilms = () => {
 
           {/* Hero section */}
           <div className="hero-section">
-            <h1>Feature Your Film on Our Website</h1>
+            <h1>Get a Chance to feature your film on Our website</h1>
             <h2>Have a captivating short film? Submit it now!</h2>
             <p>
               Ready to showcase your film? Enter your email to begin the submission process and be part of
