@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import './shortfilms.css';
 import FilmSection from './FilmSection';
@@ -21,24 +20,14 @@ const ShortFilms = () => {
       style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/film1.png)` }} // Your custom background image
     >
       <header className="netflix-header">
-        <img
-          src="images/white.png"
-          alt="Netflix Logo"
-          className="netflix-logo"
-        />
-        <div className="header-controls">
-          <select className="language-selector">
-            <option value="en">English</option>
-          </select>
-          <button className="sign-in-btn">Join Us</button>
-        </div>
+        <button className="back-btn" onClick={() => window.history.back()}>← Back</button>
       </header>
 
       {/* Hero section */}
       <div className="hero-section">
-        <h1>Unlimited films, cinematography events, and more</h1>
-        <h2>Explore our captivating short films.</h2>
-        <p>Ready to explore? Enter your email to join Spectrum and kickstart your journey in the world of films.</p>
+        <h1>Feature Your Film on Our Website</h1>
+        <h2>Have a captivating short film? Submit it now!</h2>
+        <p>Ready to showcase your film? Enter your email to begin the submission process and be part of our exclusive collection of short films.</p>
 
         {/* Email form */}
         <form className="email-form" onSubmit={handleSubmit}>
@@ -51,12 +40,12 @@ const ShortFilms = () => {
             required
           />
           <button type="submit" className="get-started-btn">
-            Get Started
+            Submit Your Film
           </button>
         </form>
       </div>
       <div>
-      <FilmSection />
+        <FilmSection />
       </div>
     </div>
   );

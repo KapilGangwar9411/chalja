@@ -95,8 +95,8 @@ const FilmSection = () => {
 
         {/* Modal */}
         {modalFilm && (
-          <div className="modal">
-            <div className="modal-content">
+          <div className="modal2">
+            <div className="modal-content2">
               <span className="close" onClick={closeModal}>&times;</span>
               <h2>{modalFilm.title}</h2>
               <iframe
