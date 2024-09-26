@@ -15,11 +15,10 @@
 
 .films-section h1 {
   color: #121212;
-  font-family: Anton;
+  font-family: Bricolage;
+  font-weight: 600;
   margin-bottom: 30px;
   font-size: 3.5rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
   text-shadow: var(--text-shadow);
   transition: color 0.3s, transform 0.3s;
 }

@@ -3,7 +3,7 @@ import './filmSection.css';
 
 const filmsData = [
   {
-    title: 'Babli Bouncer',
+    title: 'Safar',
     image: `${process.env.PUBLIC_URL}images/Safar.png`,
     year: '2022',
     duration: '1h 57m',
@@ -13,7 +13,7 @@ const filmsData = [
     videoUrl: 'videos/showreel.mp4', // Sample video URL
   },
   {
-    title: 'Sarabhai vs Sarabhai',
+    title: 'Safar',
     image: `${process.env.PUBLIC_URL}images/Safar.png`,
     year: '2004',
     duration: '2 Seasons',
@@ -23,7 +23,7 @@ const filmsData = [
     videoUrl: 'videos/showreel.mp4', // Sample video URL
   },
   {
-    title: 'Kya Haal Mr. Panchaal?',
+    title: 'Safar',
     image: `${process.env.PUBLIC_URL}images/Safar.png`,
     year: '2017',
     duration: '1 Season',
@@ -33,7 +33,7 @@ const filmsData = [
     videoUrl: 'videos/showreel.mp4',
   },
   {
-    title: 'Kya Haal Mr. Panchaal?',
+    title: 'Safar',
     image: `${process.env.PUBLIC_URL}images/Safar.png`,
     year: '2017',
     duration: '1 Season',
