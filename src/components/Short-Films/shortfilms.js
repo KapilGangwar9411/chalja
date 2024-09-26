@@ -3,6 +3,7 @@ import './shortfilms.css';
 import FilmSection from './FilmSection';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import Footer from '../Footer';
 
 const ShortFilms = () => {
   const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ const ShortFilms = () => {
     <div>
       {!imageLoaded ? (
         <div className="loader">
-          <img src="images/lens.png" alt="Logo" className="loader-logo" />
+          <img src="images/lens.png" alt="Loading.." className="loader-logo" />
         </div>
       ) : (
         <div
@@ -75,6 +76,7 @@ const ShortFilms = () => {
           
           <div>
             <FilmSection />
+            <Footer />
           </div>
         </div>
       )}

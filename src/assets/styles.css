@@ -8,9 +8,15 @@
   font-family: 'Anton';
   src: url('./Fonts/anton.ttf') format('truetype');
 }
+
 @font-face {
   font-family: 'fira';
   src: url('./Fonts/FiraSans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'august';
+  src: url('./Fonts/August.ttf') format('truetype');
 }
 
 html {

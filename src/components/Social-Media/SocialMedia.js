@@ -6,17 +6,17 @@ const SocialMedia = () => {
     {
       name: 'Instagram',
       url: 'https://www.instagram.com/niet_spectrum_club?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
-      icon: '📸',
+      icon: 'icons/instagram.svg', // Path to your Instagram icon
     },
     {
       name: 'LinkedIn',
       url: 'https://www.linkedin.com',
-      icon: '💼',
+      icon: 'icons/linkedin.svg', // Path to your LinkedIn icon
     },
     {
       name: 'YouTube',
       url: 'https://www.youtube.com',
-      icon: '📺',
+      icon: 'icons/youtube.svg', // Path to your YouTube icon
     },
   ];
 
@@ -33,7 +33,7 @@ const SocialMedia = () => {
             className="social-icon"
           >
             <div className="icon">
-              {social.icon}
+              <img src={`${process.env.PUBLIC_URL}/${social.icon}`} alt={social.name} />
             </div>
             <span className="icon-name">{social.name}</span>
           </a>
