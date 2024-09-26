@@ -625,7 +625,43 @@ nav ul li a:hover {
   color: #007bff;
 }
 
-  
+/* Style for clickable link */
+.social-icons {
+  display: flex;
+  justify-content: center; /* Center the icons horizontally */
+  margin-top: 10px; /* Space between title and icons */
+  gap: 15px; /* Space between the links */
+}
+
+.social-link {
+  font-size: 1rem; /* Set the font size */
+  text-decoration: none; /* Remove underline from links */
+  color: #007bff; /* Change color to match your theme */
+  position: relative; /* For the animation effect */
+  overflow: hidden; /* Hide overflow for animation */
+  transition: color 0.3s; /* Transition for color change */
+}
+
+.social-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px; /* Position below text */
+  width: 100%;
+  height: 2px; /* Thickness of the underline */
+  background: #007bff; /* Underline color */
+  transform: translateX(-100%); /* Initially hide the underline */
+  transition: transform 0.3s; /* Transition for the underline effect */
+}
+
+.social-link:hover {
+  color: #0056b3; /* Darker color on hover */
+}
+
+.social-link:hover::after {
+  transform: translateX(0); /* Show the underline on hover */
+}
+
 
 /* Responsive Media Queries */
 @media (max-width: 1024px) {
@@ -1349,6 +1385,7 @@ nav ul li a:hover {
 .events-button:focus {
   outline: none; /* Remove focus outline */
 }
+
 
 /* event buttons in events about and register */
 .event-buttons2 {
