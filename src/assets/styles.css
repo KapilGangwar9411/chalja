@@ -1470,3 +1470,67 @@ nav ul li a:hover {
     font-size: 0.9rem; /* Further decrease button font size */
   }
 }
+
+
+
+/* Center the 'Coming Soon' text in the middle of the screen */
+.lcdiwali-coming-soon-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #f7f7f7; /* Light background for simplicity */
+  position: relative;
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Styling for the 'Coming Soon' text */
+.lcdiwali-coming-soon-text {
+  font-family: august;
+  font-size: 10rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Back Button in the top left corner */
+.lcdiwali-back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #d22c2c;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.lcdiwali-back-button:hover {
+  background-color: #7a0d0d;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .lcdiwali-coming-soon-text {
+      font-size: 5rem;
+  }
+
+  .lcdiwali-back-button {
+      padding: 8px 15px; /* Adjust button padding for mobile */
+      font-size: 0.9rem;
+  }
+}
