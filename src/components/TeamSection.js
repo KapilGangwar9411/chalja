@@ -7,14 +7,14 @@ const teamMembers = [
     title: 'Vice President',
     image: '/images/hardik.jpg',
     instagram: 'https://www.instagram.com/hardik_ojha_?igsh=dDQ3eHFxemhhdTd1&utm_source=qr', // Replace with actual URL
-    linkedin: 'https://www.linkedin.com/in/hardikojha', // Replace with actual URL
+    linkedin: 'https://www.linkedin.com/in/hardik-ojha-96328b304', // Replace with actual URL
   },
   {
     name: 'Ayush Shukla',
     title: 'President',
     image: '/images/shukla.jpg',
-    instagram: 'https://www.instagram.com/ayushshukla', // Replace with actual URL
-    linkedin: 'https://www.linkedin.com/in/ayushshukla', // Replace with actual URL
+    instagram: 'https://www.instagram.com/ayush_shukla09?igsh=MnRrNmdsOXQzMnUxr', // Replace with actual URL
+    linkedin: 'https://www.linkedin.com/in/ayush-shukla-20b755250s', // Replace with actual URL
   },
   {
     name: 'Kapil Gangwar',
