@@ -6,7 +6,7 @@ const teamMembers = [
     name: 'Hardik Ojha',
     title: 'Vice President',
     image: '/images/hardik.jpg',
-    instagram: 'https://www.instagram.com/hardikojha', // Replace with actual URL
+    instagram: 'https://www.instagram.com/hardik_ojha_?igsh=dDQ3eHFxemhhdTd1&utm_source=qr', // Replace with actual URL
     linkedin: 'https://www.linkedin.com/in/hardikojha', // Replace with actual URL
   },
   {

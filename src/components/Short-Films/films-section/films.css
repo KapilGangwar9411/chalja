@@ -1,0 +1,85 @@
+/* ShortFilms CSS to match Netflix-like style */
+.short-films-container {
+    padding: 20px;
+    background-color: #141414;
+    color: #fff;
+    margin-bottom: 40px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-align: left;
+    padding-left: 15px;
+  }
+  
+  .film-item {
+    position: relative;
+    padding: 10px;
+  }
+  
+  .thumbnail-wrapper {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .thumbnail-wrapper:hover {
+    transform: scale(1.05);
+  }
+  
+  .film-thumbnail {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+  
+  .film-number {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 5px;
+    border-radius: 50%;
+  }
+  
+  .recently-added-badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: #e50914;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  .film-info {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .film-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .slick-prev:before, .slick-next:before {
+    color: white;
+  }
+  
+  .slick-dots li button:before {
+    font-size: 12px;
+    color: white;
+  }
+  
+  .slick-dots li.slick-active button:before {
+    color: #e50914;
+  }
+  
