@@ -9,6 +9,7 @@ import EventPopup from './components/Event-Popup/EventPopup';
 import ArambhEvent from './components/About-Events/Arambh/ArambhEvent';
 import LightsCameraDiwali from './components/About-Events/Lights-Camera-Diwali/LightsCameraDiwali';
 import Footer from './components/Footer';
+import Nightphoto from './components/About-Events/Night-Photowalks/nightphoto';
 
 function App() {
   const [showPopup, setShowPopup] = useState(false);
@@ -40,6 +41,7 @@ function App() {
           <Route path="/events/2" element={<AboutFilmscreening />} />
           <Route path="/events/1" element={<ArambhEvent />} />
           <Route path="/events/3" element={<LightsCameraDiwali />} />
+          <Route path="/events/4" element={<Nightphoto />} />
         </Routes>
       </Router>
       {showPopup && <EventPopup onClose={closePopup} />}
