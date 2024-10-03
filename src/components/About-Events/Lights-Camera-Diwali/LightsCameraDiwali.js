@@ -12,11 +12,11 @@ const LightsCameraDiwali = () => {
     }, []);
 
     return (
-        <div className="hero-section2" style={{ backgroundImage: "url('/images/LightsCamera.png')" }}>
+        <div className="hero-section" style={{ backgroundImage: "url('/images/post.jpg')" }}>
             <div className="overlay"></div>
             <header className="navbar"></header>
 
-            <div className="content2">
+            <div className="content">
                 {/* Back Button */}
                 <button className="back-button" onClick={() => navigate(-1)}>Back</button>
 

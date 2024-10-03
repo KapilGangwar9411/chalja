@@ -1,4 +1,4 @@
-.hero-section2 {
+.hero-section {
     position: relative;
     height: auto;
     background-size: cover;
@@ -10,7 +10,7 @@
     padding: 20px;
 }
 
-.overlay2 {
+.overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -19,18 +19,18 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-.content2 {
+.content {
     position: relative;
     z-index: 1;
     text-align: center;
 }
 
-.event-header2 {
+.event-header {
     margin-bottom: 30px;
     animation: fadeIn 1s ease-in;
 }
 
-.title2 {
+.title {
     font-size: 3.5rem;
     font-weight: bold;
     margin-bottom: 15px;
