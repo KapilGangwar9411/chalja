@@ -117,7 +117,7 @@ const AdminDashboard = () => {
       });
 
       // Your WhatsApp group invite link
-      const whatsappGroupLink = "https://chat.whatsapp.com/YOUR_GROUP_LINK"; // Replace this with your actual group invite link
+      const whatsappGroupLink = "https://chat.whatsapp.com/K64zrdrxJwY9Y1Bnrf46nd"; // Replace this with your actual group invite link
       
       // Create a new user in the users node
       const newUserRef = ref(database, 'users');
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
       const whatsappMessage = `Welcome to Spectrum, ${requestData.name}! 🎉\n\n` +
         `Your application has been approved. Please join our WhatsApp group using this link:\n` +
         `${whatsappGroupLink}\n\n` +
-        `We're excited to have you as part of our community!`;
+        `We're excited to have you as part of Spectrum!`;
 
       // Open WhatsApp with the message
       const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
