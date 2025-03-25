@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, database } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { ref, get, update, remove, push } from 'firebase/database';
+import Loader from '../components/Loader';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -11,6 +12,8 @@ const AdminDashboard = () => {
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [showUsersModal, setShowUsersModal] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalPosts: 0,
@@ -66,12 +69,27 @@ const AdminDashboard = () => {
         get(joinRequestsRef)
       ]);
 
+      // Get all users that are approved
+      let approvedUsers = [];
+      if (usersSnapshot.exists()) {
+        approvedUsers = Object.entries(usersSnapshot.val())
+          .map(([id, data]) => ({
+            id,
+            ...data
+          }))
+          .filter(user => user.isApproved); // Only count approved users
+        
+        setAllUsers(approvedUsers); // Set all users state
+      }
+
+      // Count pending requests
       const pendingRequests = requestsSnapshot.exists() 
-        ? Object.values(requestsSnapshot.val()).filter(request => request.status === 'pending').length 
+        ? Object.values(requestsSnapshot.val())
+          .filter(request => request.status === 'pending' || !request.status).length 
         : 0;
 
       setStats({
-        totalUsers: usersSnapshot.exists() ? Object.keys(usersSnapshot.val()).length : 0,
+        totalUsers: approvedUsers.length, // Use the length of approved users
         totalPosts: postsSnapshot.exists() ? Object.keys(postsSnapshot.val()).length : 0,
         totalComments: commentsSnapshot.exists() ? Object.keys(commentsSnapshot.val()).length : 0,
         pendingRequests
@@ -95,6 +113,7 @@ const AdminDashboard = () => {
             id,
             ...data
           }))
+          .filter(request => request.status === 'pending' || !request.status) // Only show pending requests
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setJoinRequests(requests);
       } else {
@@ -108,6 +127,8 @@ const AdminDashboard = () => {
 
   const handleApproveRequest = async (requestId, phoneNumber, requestData) => {
     try {
+      setLoading(true); // Show loader while processing
+
       // First, update the request status
       const requestRef = ref(database, `joinRequests/${requestId}`);
       await update(requestRef, {
@@ -117,7 +138,7 @@ const AdminDashboard = () => {
       });
 
       // Your WhatsApp group invite link
-      const whatsappGroupLink = "https://chat.whatsapp.com/K64zrdrxJwY9Y1Bnrf46nd"; // Replace this with your actual group invite link
+      const whatsappGroupLink = "https://chat.whatsapp.com/K64zrdrxJwY9Y1Bnrf46nd";
       
       // Create a new user in the users node
       const newUserRef = ref(database, 'users');
@@ -125,7 +146,7 @@ const AdminDashboard = () => {
         email: `${requestData.phone}@spectrum.com`,
         isAdmin: false,
         isSuperAdmin: false,
-        isApproved: true,
+        isApproved: true, // Make sure to set this flag
         createdAt: new Date().toISOString(),
         name: requestData.name,
         phone: requestData.phone,
@@ -137,7 +158,13 @@ const AdminDashboard = () => {
 
       // Push the new user data and get the reference
       const newUserSnapshot = await push(newUserRef, newUser);
-      console.log('New user created with ID:', newUserSnapshot.key);
+      const newUserId = newUserSnapshot.key;
+
+      // Update allUsers state immediately
+      setAllUsers(prevUsers => [...prevUsers, {
+        id: newUserId,
+        ...newUser
+      }]);
 
       // Send WhatsApp message with invite link
       const whatsappMessage = `Welcome to Spectrum, ${requestData.name}! 🎉\n\n` +
@@ -149,34 +176,49 @@ const AdminDashboard = () => {
       const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
       window.open(whatsappUrl, '_blank');
 
-      // Refresh the dashboard
-      await Promise.all([
-        fetchJoinRequests(),
-        fetchStats()
-      ]);
+      // Update local stats immediately
+      setStats(prevStats => ({
+        ...prevStats,
+        totalUsers: prevStats.totalUsers + 1,
+        pendingRequests: prevStats.pendingRequests - 1
+      }));
+
+      // Remove the request from joinRequests state
+      setJoinRequests(prevRequests => 
+        prevRequests.filter(request => request.id !== requestId)
+      );
 
       // Show success message
       setError(null);
     } catch (err) {
       console.error('Error approving request:', err);
       setError('Failed to approve request. Please try again.');
+    } finally {
+      setLoading(false); // Hide loader after processing
     }
   };
 
   const handleRejectRequest = async (requestId) => {
     try {
+      // Delete the request from the database
       const requestRef = ref(database, `joinRequests/${requestId}`);
-      await update(requestRef, {
-        status: 'rejected',
-        rejectedAt: new Date().toISOString(),
-        rejectedBy: currentUser.uid
-      });
+      await remove(requestRef);
 
-      fetchJoinRequests();
-      fetchStats();
+      // Remove the request from joinRequests state
+      setJoinRequests(prevRequests => 
+        prevRequests.filter(request => request.id !== requestId)
+      );
+
+      // Update local stats
+      setStats(prevStats => ({
+        ...prevStats,
+        pendingRequests: prevStats.pendingRequests - 1
+      }));
+
+      setError(null);
     } catch (err) {
       console.error('Error rejecting request:', err);
-      setError('Failed to reject request');
+      setError('Failed to reject request. Please try again.');
     }
   };
 
@@ -189,6 +231,36 @@ const AdminDashboard = () => {
       console.error('Error logging out:', err);
     }
   };
+
+  const UsersModal = () => (
+    <div className="modal-overlay" onClick={() => setShowUsersModal(false)}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>All Users</h2>
+          <button className="close-button" onClick={() => setShowUsersModal(false)}>×</button>
+        </div>
+        <div className="users-list">
+          {allUsers.map(user => (
+            <div key={user.id} className="user-item">
+              <div className="user-info">
+                <h3>{user.name}</h3>
+                <p><strong>Email:</strong> {user.email}</p>
+                <p><strong>Phone:</strong> {user.phone}</p>
+                <p><strong>Branch:</strong> {user.branch}</p>
+                <p><strong>Year:</strong> {user.year}</p>
+                <p><strong>Interest:</strong> {user.interest}</p>
+                <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return <Loader />;
+  }
 
   if (!isAdmin) {
     return (
@@ -235,7 +307,7 @@ const AdminDashboard = () => {
         <section className="dashboard-stats">
           <h2 className="section-title">Dashboard Overview</h2>
           <div className="stats-container">
-            <div className="stat-card">
+            <div className="stat-card clickable" onClick={() => setShowUsersModal(true)}>
               <div className="stat-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -365,6 +437,8 @@ const AdminDashboard = () => {
             </button>
           </div>
         </section>
+
+        {showUsersModal && <UsersModal />}
       </div>
     </div>
   );
