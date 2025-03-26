@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin-login
+Disallow: /admin/
+Disallow: /signup
+
+# Sitemap location
+Sitemap: https://spectrum-club.com/sitemap.xml

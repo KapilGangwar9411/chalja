@@ -14,44 +14,80 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     status: 'pending',
     createdAt: new Date().toISOString(),
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = 'Name must be at least 3 characters long';
+    }
+
+    // Phone validation
+    if (!formData.phone) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^[0-9]{10}$/.test(formData.phone)) {
+      newErrors.phone = 'Phone number must be exactly 10 digits';
+    }
+
+    // Branch validation
+    if (!formData.branch) {
+      newErrors.branch = 'Please select your branch';
+    }
+
+    // Year validation
+    if (!formData.year) {
+      newErrors.year = 'Please select your year';
+    }
+
+    // Interest validation
+    if (!formData.interest) {
+      newErrors.interest = 'Please select your area of interest';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    // For phone number, only allow digits and max 10 characters
+    if (name === 'phone') {
+      const digits = value.replace(/\D/g, '').slice(0, 10);
+      setFormData({ ...formData, [name]: digits });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    // Validate all fields are filled
-    if (Object.values(formData).some((val) => !val)) {
-      setError('All fields are required.');
-      return;
-    }
-
-    // Validate phone number format
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      setError('Please enter a valid 10-digit phone number.');
+    
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
 
     try {
-      // Create a clean data object for joinRequests
       const submitData = {
         ...formData,
         createdAt: new Date().toISOString(),
         status: 'pending'
       };
 
-      // Save to Firebase joinRequests
       const joinRequestsRef = ref(database, 'joinRequests');
       const newRequestRef = await push(joinRequestsRef, submitData);
 
@@ -59,7 +95,6 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
         throw new Error('Failed to generate request ID');
       }
 
-      console.log('Form submitted successfully with ID:', newRequestRef.key);
       setSubmitted(true);
       setShowPopup(true);
       
@@ -73,8 +108,8 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
         status: 'pending',
         createdAt: new Date().toISOString(),
       });
+      setErrors({});
 
-      // Close modal after delay
       setTimeout(() => {
         setShowPopup(false);
         setIsOpen(false);
@@ -91,7 +126,7 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
         errorMessage = 'An unexpected error occurred. Please try again.';
       }
       
-      setError(errorMessage);
+      setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -118,11 +153,13 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
               </button>
             </div>
             
-            {error && <div className="error-message">{error}</div>}
+            {errors.submit && <div className="error-message">{errors.submit}</div>}
             
             <form onSubmit={handleSubmit} className="join-form">
               <div className="form-group">
-                <label htmlFor="name">Full Name</label>
+                <label htmlFor="name">
+                  Full Name <span className="required">*</span>
+                </label>
                 <input
                   type="text"
                   id="name"
@@ -130,14 +167,16 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  required
-                  className="input-field"
+                  className={`input-field ${errors.name ? 'error' : ''}`}
                   disabled={loading}
                 />
+                {errors.name && <span className="error-text">{errors.name}</span>}
               </div>
 
               <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
+                <label htmlFor="phone">
+                  Phone Number <span className="required">*</span>
+                </label>
                 <input
                   type="tel"
                   id="phone"
@@ -145,43 +184,49 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your 10-digit phone number"
-                  required
-                  className="input-field"
+                  className={`input-field ${errors.phone ? 'error' : ''}`}
                   disabled={loading}
                 />
+                {errors.phone && <span className="error-text">{errors.phone}</span>}
               </div>
 
               <div className="form-group">
-                <label htmlFor="branch">Branch</label>
+                <label htmlFor="branch">
+                  Branch <span className="required">*</span>
+                </label>
                 <select
                   id="branch"
                   name="branch"
                   value={formData.branch}
                   onChange={handleChange}
-                  required
-                  className="input-field"
+                  className={`input-field ${errors.branch ? 'error' : ''}`}
                   disabled={loading}
                 >
                   <option value="">Select your branch</option>
-                  <option value="CSE">Computer Science</option>
-                  <option value="ECE">Electronics</option>
-                  <option value="ME">Mechanical</option>
-                  <option value="CE">Civil</option>
-                  <option value="EE">Electrical</option>
+                  <option value="CSE">Computer Science and Engineering</option>
+                  <option value="ECE">Electronics and Communication Engineering</option>
+                  <option value="ME">Mechanical Engineering</option>
+                  <option value="CE">Civil Engineering</option>
+                  <option value="EE">Electrical Engineering</option>
                   <option value="IT">Information Technology</option>
+                  <option value="DS">Data Science</option>
+                  <option value="AI">Artificial Intelligence</option>
+                  <option value="IOT">Internet of Things</option>
                   <option value="Other">Other</option>
                 </select>
+                {errors.branch && <span className="error-text">{errors.branch}</span>}
               </div>
 
               <div className="form-group">
-                <label htmlFor="year">Year of Study</label>
+                <label htmlFor="year">
+                  Year of Study <span className="required">*</span>
+                </label>
                 <select
                   id="year"
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                  required
-                  className="input-field"
+                  className={`input-field ${errors.year ? 'error' : ''}`}
                   disabled={loading}
                 >
                   <option value="">Select your year</option>
@@ -190,27 +235,30 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
                   <option value="3rd">3rd Year</option>
                   <option value="4th">4th Year</option>
                 </select>
+                {errors.year && <span className="error-text">{errors.year}</span>}
               </div>
 
               <div className="form-group">
-                <label htmlFor="interest">Area of Interest</label>
+                <label htmlFor="interest">
+                  Area of Interest <span className="required">*</span>
+                </label>
                 <select
                   id="interest"
                   name="interest"
                   value={formData.interest}
                   onChange={handleChange}
-                  required
-                  className="input-field"
+                  className={`input-field ${errors.interest ? 'error' : ''}`}
                   disabled={loading}
                 >
                   <option value="">Select your interest</option>
-                  <option value="Web Development">Web Development</option>
-                  <option value="App Development">App Development</option>
-                  <option value="UI/UX Design">UI/UX Design</option>
-                  <option value="Machine Learning">Machine Learning</option>
-                  <option value="Competitive Programming">Competitive Programming</option>
+                  <option value="Video Editing">Video Editing</option>
+                  <option value="Graphic Designing">Graphic Designing</option>
+                  <option value="Film Making">Film Making</option>
+                  <option value="Cinematography">Cinematography</option>
+                  <option value="Photography">Photography</option>
                   <option value="Other">Other</option>
                 </select>
+                {errors.interest && <span className="error-text">{errors.interest}</span>}
               </div>
 
               <button type="submit" className="submit-button" disabled={loading}>

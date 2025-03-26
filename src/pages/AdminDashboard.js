@@ -27,7 +27,6 @@ const AdminDashboard = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setCurrentUser(user);
-        // Check if user is admin or super admin
         const userRef = ref(database, `users/${user.uid}`);
         const userSnapshot = await get(userRef);
         
@@ -57,7 +56,6 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      // Set up real-time listener for users
       const usersRef = ref(database, 'users');
       onValue(usersRef, (snapshot) => {
         if (snapshot.exists()) {
@@ -81,7 +79,6 @@ const AdminDashboard = () => {
         }
       });
 
-      // Fetch other stats
       const postsRef = ref(database, 'posts');
       const commentsRef = ref(database, 'comments');
       const joinRequestsRef = ref(database, 'joinRequests');
@@ -92,7 +89,6 @@ const AdminDashboard = () => {
         get(joinRequestsRef)
       ]);
 
-      // Count pending requests
       const pendingRequests = requestsSnapshot.exists() 
         ? Object.values(requestsSnapshot.val())
           .filter(request => request.status === 'pending' || !request.status).length 
@@ -123,7 +119,7 @@ const AdminDashboard = () => {
             id,
             ...data
           }))
-          .filter(request => request.status === 'pending' || !request.status) // Only show pending requests
+          .filter(request => request.status === 'pending' || !request.status)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setJoinRequests(requests);
       } else {
@@ -137,9 +133,9 @@ const AdminDashboard = () => {
 
   const handleApproveRequest = async (requestId, phoneNumber, requestData) => {
     try {
-      setLoading(true); // Show loader while processing
+      setLoading(true);
 
-      // First, update the request status
+    
       const requestRef = ref(database, `joinRequests/${requestId}`);
       await update(requestRef, {
         status: 'approved',
@@ -164,47 +160,44 @@ const AdminDashboard = () => {
         approvedBy: currentUser.uid
       };
 
-      // Create new user record
+     
       const usersRef = ref(database, 'users');
       const newUserRef = await push(usersRef, userData);
 
-      // Your WhatsApp group invite link
+     
       const whatsappGroupLink = "https://chat.whatsapp.com/K64zrdrxJwY9Y1Bnrf46nd";
       
-      // Format phone number for WhatsApp
-      // Remove any non-digit characters and ensure it starts with country code
+     
       const formattedPhone = phoneNumber.replace(/\D/g, '');
       const whatsappPhone = formattedPhone.startsWith('91') ? formattedPhone : `91${formattedPhone}`;
       
-      // Send WhatsApp message with invite
+     
       const whatsappMessage = `Welcome to Spectrum, ${requestData.name}! 🎉\n\n` +
         `Your application has been approved. Please join our WhatsApp group using this link:\n` +
         `${whatsappGroupLink}\n\n` +
         `We're excited to have you as part of Spectrum!`;
 
-      // Open WhatsApp with the message
+      
       const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`;
       window.open(whatsappUrl, '_blank');
 
-      // Update local stats immediately
       setStats(prevStats => ({
         ...prevStats,
         totalUsers: prevStats.totalUsers + 1,
         pendingRequests: prevStats.pendingRequests - 1
       }));
 
-      // Remove the request from joinRequests state
       setJoinRequests(prevRequests => 
         prevRequests.filter(request => request.id !== requestId)
       );
 
-      // Show success message
+  
       setError(null);
     } catch (err) {
       console.error('Error approving request:', err);
       setError('Failed to approve request. Please try again.');
     } finally {
-      setLoading(false); // Hide loader after processing
+      setLoading(false);
     }
   };
 
@@ -310,7 +303,7 @@ const AdminDashboard = () => {
           </div>
           <div className="header-actions">
             {isSuperAdmin && (
-              <button className="super-admin-button" onClick={() => navigate('/super-admin')}>
+              <button className="super-admin-button" onClick={() => navigate('/admin-login')}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                 </svg>
