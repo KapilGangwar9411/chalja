@@ -4,11 +4,10 @@ import './GalleryShowcase.css';
 const GalleryShowcase = () => {
   const [videoError, setVideoError] = useState(false);
   
-  // SharePoint video embed URL from the provided embed code
-  const embedUrl = "https://noidainstituteofengtech-my.sharepoint.com/personal/0221cse182_niet_co_in/_layouts/15/embed.aspx?UniqueId=9b9f2922-7365-49a6-bc0e-983fd8ce884a&embed=%7B%22af%22%3Atrue%2C%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create";
+  const videoId = '1069577133';
+  const embedUrl = `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&loop=1&autopause=0&muted=1&controls=0&quality=4k&playsinline=1&dnt=1`;
   
-  // Updated public link to the video
-  const directVideoUrl = "https://noidainstituteofengtech-my.sharepoint.com/:v:/g/personal/0221cse182_niet_co_in/ESIpn5tlc6ZJvA6YP9jOiEoBTZTZt7Rv0IbymDOjMbPRQQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=WyCAPS";
+  const directVideoUrl = `https://vimeo.com/${videoId}`;
 
   const handleVideoError = () => {
     setVideoError(true);
@@ -28,10 +27,10 @@ const GalleryShowcase = () => {
       <div className="video-wrapper">
         {videoError ? (
           <div className="video-error">
-            <p>Unable to access the video directly within the page.</p>
+            <p>Unable to load the video.</p>
             <ul>
-              <li>This may be due to your institution's sharing policies</li>
-              <li>You may need to be logged into your NIET account</li>
+              <li>This may be due to your internet connection</li>
+              <li>The video might be temporarily unavailable</li>
             </ul>
             <div className="error-buttons">
               <button onClick={handleRetry} className="retry-button">
@@ -43,7 +42,7 @@ const GalleryShowcase = () => {
                 rel="noopener noreferrer"
                 className="watch-link"
               >
-                Watch Video Directly
+                Watch on Vimeo
               </a>
             </div>
           </div>
@@ -53,9 +52,9 @@ const GalleryShowcase = () => {
               src={embedUrl}
               className="showcase-video"
               frameBorder="0"
-              scrolling="no"
+              allow="autoplay; fullscreen; picture-in-picture"
               allowFullScreen
-              title="final.mp4"
+              title="Showcase Video"
               loading="eager"
               onError={handleVideoError}
               style={{
