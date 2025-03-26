@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
 import { ref, set, get } from 'firebase/database';
 import { auth, database } from '../firebase';
 import '../assets/styles.css';
@@ -13,6 +13,8 @@ const AdminLogin = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [adminType, setAdminType] = useState('admin'); // 'admin' or 'superadmin'
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const navigate = useNavigate();
 
   // Check if super admin exists
@@ -93,6 +95,29 @@ const AdminLogin = () => {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      await sendPasswordResetEmail(auth, email);
+      setResetEmailSent(true);
+      setShowForgotPassword(false);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      setError(error.message.includes('auth/user-not-found') 
+        ? 'No account found with this email address' 
+        : 'Failed to send reset email. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -134,13 +159,13 @@ const AdminLogin = () => {
       } catch (dbError) {
         console.error('Database write error:', dbError);
         // If database write fails, delete the auth user
-        await userCredential.user.delete();
+        await deleteUser(userCredential.user);
         throw new Error('Failed to save user data: ' + dbError.message);
       }
     } catch (error) {
       console.error('Signup error:', error);
       if (error.code === 'auth/email-already-in-use') {
-        setError('Email already in use');
+        setError('Email already in use. Please try logging in instead.');
       } else if (error.code === 'auth/invalid-email') {
         setError('Invalid email address');
       } else if (error.code === 'auth/weak-password') {
@@ -165,6 +190,11 @@ const AdminLogin = () => {
         <h1>{isSignup ? 'Admin Sign Up' : 'Admin Login'}</h1>
         
         {error && <div className="error-message">{error}</div>}
+        {resetEmailSent && (
+          <div className="success-message">
+            Password reset email sent! Please check your inbox.
+          </div>
+        )}
 
         <div className="admin-type-selector">
           <button
@@ -183,66 +213,109 @@ const AdminLogin = () => {
           </button>
         </div>
         
-        <form onSubmit={isSignup ? handleSignup : handleLogin}>
-          <div className="input-group">
-            <input
-              type="email"
-              className="admin-input"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          
-          <div className="input-group">
-            <input
-              type="password"
-              className="admin-input"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          
-          {isSignup && (
+        {showForgotPassword ? (
+          <form onSubmit={handleForgotPassword}>
+            <div className="input-group">
+              <input
+                type="email"
+                className="admin-input"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <button 
+              type="submit" 
+              className="admin-button"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Reset Password'}
+            </button>
+            <div className="auth-links">
+              <span className="auth-link" onClick={() => {
+                setShowForgotPassword(false);
+                setResetEmailSent(false);
+                setError('');
+              }}>
+                Back to Login
+              </span>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={isSignup ? handleSignup : handleLogin}>
+            <div className="input-group">
+              <input
+                type="email"
+                className="admin-input"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            
             <div className="input-group">
               <input
                 type="password"
                 className="admin-input"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-          )}
-          
-          <button 
-            type="submit" 
-            className="admin-button"
-            disabled={loading}
-          >
-            {loading ? 'Please wait...' : (isSignup ? `Sign Up as ${adminType === 'superadmin' ? 'Super Admin' : 'Admin'}` : 'Login')}
-          </button>
-        </form>
+            
+            {isSignup && (
+              <div className="input-group">
+                <input
+                  type="password"
+                  className="admin-input"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+            )}
+            
+            <button 
+              type="submit" 
+              className="admin-button"
+              disabled={loading}
+            >
+              {loading ? 'Please wait...' : (isSignup ? `Sign Up as ${adminType === 'superadmin' ? 'Super Admin' : 'Admin'}` : 'Login')}
+            </button>
+          </form>
+        )}
         
         <div className="auth-links">
-          {isSignup ? (
-            <>Already have an account?
-              <span className="auth-link" onClick={() => {
-                setIsSignup(false);
-                setError('');
-              }}>
-                Login
-              </span>
-            </>
-          ) : (
-            <>Don't have an account?
-              <span className="auth-link" onClick={() => {
-                setIsSignup(true);
-                setError('');
-              }}>
-                Sign Up
-              </span>
+          {!showForgotPassword && (
+            <>
+              {isSignup ? (
+                <>Already have an account?
+                  <span className="auth-link" onClick={() => {
+                    setIsSignup(false);
+                    setError('');
+                  }}>
+                    Login
+                  </span>
+                </>
+              ) : (
+                <>
+                  Don't have an account?
+                  <span className="auth-link" onClick={() => {
+                    setIsSignup(true);
+                    setError('');
+                  }}>
+                    Sign Up
+                  </span>
+                </>
+              )}
+              <div className="forgot-password-link">
+                <span className="auth-link" onClick={() => {
+                  setShowForgotPassword(true);
+                  setError('');
+                }}>
+                  Forgot Password?
+                </span>
+              </div>
             </>
           )}
         </div>
