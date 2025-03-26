@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './GalleryShowcase.css';
 
 const GalleryShowcase = () => {
   const [videoError, setVideoError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const videoId = '1069577133';
   const embedUrl = `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&loop=1&autopause=0&muted=1&controls=0&quality=4k&playsinline=1&dnt=1`;
-  
   const directVideoUrl = `https://vimeo.com/${videoId}`;
 
   const handleVideoError = () => {
     setVideoError(true);
+    setIsLoading(false);
+  };
+
+  const handleVideoLoad = () => {
+    setIsLoading(false);
   };
 
   const handleRetry = () => {
     setVideoError(false);
+    setIsLoading(true);
     // Force iframe refresh
     const iframe = document.querySelector('.showcase-video');
     if (iframe) {
@@ -25,6 +31,20 @@ const GalleryShowcase = () => {
   return (
     <div className="video-showcase">
       <div className="video-wrapper">
+        {isLoading && !videoError && (
+          <div className="video-loading">
+            <div className="loading-content">
+              <div className="loading-icon">🌟</div>
+              <p className="loading-text">Improve your internet connection to see the video</p>
+              <p className="loading-subtext">Till then, feel free to scroll down! ✨</p>
+              <div className="loading-animation">
+                <span>•</span>
+                <span>•</span>
+                <span>•</span>
+              </div>
+            </div>
+          </div>
+        )}
         {videoError ? (
           <div className="video-error">
             <p>Unable to load the video.</p>
@@ -57,6 +77,7 @@ const GalleryShowcase = () => {
               title="Showcase Video"
               loading="eager"
               onError={handleVideoError}
+              onLoad={handleVideoLoad}
               style={{
                 border: 'none',
                 position: 'absolute',

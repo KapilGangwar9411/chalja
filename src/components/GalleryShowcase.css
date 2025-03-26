@@ -694,7 +694,7 @@
   width: 100%;
   padding-top: 56.25%; /* 16:9 Aspect Ratio */
   overflow: hidden;
-  border-radius: 16px; /* Added rounded corners */
+  border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -705,27 +705,7 @@
   width: 100%;
   height: 100%;
   border: none;
-  border-radius: 16px; /* Added rounded corners */
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .video-showcase {
-    height: 65vh;
-  }
-}
-
-@media (max-width: 768px) {
-  .video-showcase {
-    height: 60vh;
-    padding: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .video-showcase {
-    height: 50vh;
-  }
+  border-radius: 16px;
 }
 
 /* Video Error Styles */
@@ -742,28 +722,26 @@
   background-color: #f8f9fa;
   padding: 2rem;
   text-align: center;
-  border-radius: 16px; /* Added rounded corners */
+  border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .video-error p {
-  color: #666;
-  font-size: 1.1rem;
-  margin: 0 0 1rem 0;
-  line-height: 1.5;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #343a40;
 }
 
 .video-error ul {
   list-style: none;
   padding: 0;
   margin: 0 0 1.5rem 0;
-  color: #666;
 }
 
 .video-error li {
-  margin: 0.5rem 0;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
-  line-height: 1.4;
 }
 
 .error-buttons {
@@ -771,17 +749,16 @@
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 1.5rem;
 }
 
 .retry-button {
+  padding: 0.75rem 1.5rem;
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
   transition: background-color 0.2s ease;
 }
 
@@ -790,40 +767,29 @@
 }
 
 .watch-link {
-  background-color: transparent;
-  color: #007bff;
-  border: 1px solid #007bff;
   padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
+  background-color: #6c757d;
+  color: white;
   text-decoration: none;
-  transition: all 0.2s ease;
-  display: inline-block;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
 }
 
 .watch-link:hover {
-  background-color: #007bff;
-  color: white;
+  background-color: #495057;
 }
 
-.permission-note {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #ddd;
-  width: 100%;
-  max-width: 600px;
-}
+/* Media Queries for Responsive Design */
 
-.note {
-  font-size: 0.85rem !important;
-  color: #888 !important;
-  font-style: italic;
-  margin: 0 !important;
-}
+/* Small Mobile Devices (up to 320px) */
+@media screen and (max-width: 320px) {
+  .video-showcase {
+    padding: 10px;
+  }
 
-@media (max-width: 768px) {
   .video-error {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .video-error p {
@@ -831,17 +797,276 @@
   }
 
   .video-error li {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+  }
+
+  .retry-button,
+  .watch-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    width: 100%;
   }
 
   .error-buttons {
-    flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
+  }
+}
+
+/* Mobile Devices (321px - 480px) */
+@media screen and (min-width: 321px) and (max-width: 480px) {
+  .video-showcase {
+    padding: 15px;
+  }
+
+  .video-error {
+    padding: 1.5rem;
   }
 
   .retry-button,
   .watch-link {
     padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablets (481px - 768px) */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .video-showcase {
+    padding: 20px;
+  }
+
+  .video-wrapper {
+    border-radius: 12px;
+  }
+
+  .showcase-video {
+    border-radius: 12px;
+  }
+
+  .video-error {
+    border-radius: 12px;
+  }
+}
+
+/* Large Tablets and Small Laptops (769px - 1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .video-showcase {
+    max-width: 900px;
+  }
+}
+
+/* Laptops and Desktops (1025px - 1200px) */
+@media screen and (min-width: 1025px) and (max-width: 1200px) {
+  .video-showcase {
+    max-width: 1000px;
+  }
+}
+
+/* Large Desktops (above 1200px) */
+@media screen and (min-width: 1201px) {
+  .video-showcase {
+    max-width: 1200px;
+  }
+
+  .video-error p {
+    font-size: 1.3rem;
+  }
+
+  .video-error li {
+    font-size: 1.1rem;
+  }
+
+  .retry-button,
+  .watch-link {
+    padding: 0.8rem 1.8rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* High DPI Screens */
+@media screen and (min-resolution: 192dpi) {
+  .video-wrapper {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    bottom: -15vh;
+  }
+}
+
+/* Landscape Mode for Mobile Devices */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .video-showcase {
+    padding: 10px;
+  }
+
+  .video-error {
+    padding: 1rem;
+  }
+
+  .video-error p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .video-error ul {
+    margin-bottom: 1rem;
+  }
+
+  .error-buttons {
+    gap: 0.75rem;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .video-error {
+    background-color: #343a40;
+  }
+
+  .video-error p {
+    color: #f8f9fa;
+  }
+
+  .video-error li {
+    color: #adb5bd;
+  }
+
+  .retry-button {
+    background-color: #0d6efd;
+  }
+
+  .retry-button:hover {
+    background-color: #0b5ed7;
+  }
+
+  .watch-link {
+    background-color: #495057;
+  }
+
+  .watch-link:hover {
+    background-color: #343a40;
+  }
+}
+
+/* Loading State */
+.video-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  z-index: 10;
+}
+
+.loading-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 400px;
+}
+
+.loading-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #343a40;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.loading-subtext {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.loading-animation {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.loading-animation span {
+  width: 8px;
+  height: 8px;
+  background-color: #007bff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.loading-animation span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-animation span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Dark Mode Support for Loading State */
+@media (prefers-color-scheme: dark) {
+  .video-loading {
+    background-color: #343a40;
+  }
+
+  .loading-text {
+    color: #f8f9fa;
+  }
+
+  .loading-subtext {
+    color: #adb5bd;
+  }
+
+  .loading-animation span {
+    background-color: #0d6efd;
+  }
+}
+
+/* Mobile Adjustments for Loading State */
+@media screen and (max-width: 480px) {
+  .loading-content {
+    padding: 1.5rem;
+  }
+
+  .loading-icon {
+    font-size: 2.5rem;
+  }
+
+  .loading-text {
+    font-size: 1rem;
+  }
+
+  .loading-subtext {
     font-size: 0.9rem;
   }
 }
