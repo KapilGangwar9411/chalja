@@ -69,16 +69,17 @@ const Home = () => {
         <GalleryShowcase />
       </section>
 
+      {/* Team Section */}
+      <section id="team" className="section-container">
+        <TeamSection />
+      </section>
+
 
       {/* Events Section */}
       <section id="events" className="section-container">
         <EventsContainer />
       </section>
 
-      {/* Team Section */}
-      <section id="team" className="section-container">
-        <TeamSection />
-      </section>
 
       {/* Moving Text Section */}
       <section id="highlights" className="section-container">

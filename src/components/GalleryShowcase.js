@@ -46,9 +46,6 @@ const GalleryShowcase = () => {
                 Watch Video Directly
               </a>
             </div>
-            <div className="permission-note">
-              <p className="note">Note for administrators: To make this video accessible to everyone, please set the SharePoint permissions to "Anyone with the link" and regenerate the embed code.</p>
-            </div>
           </div>
         ) : (
           <div className="responsive-iframe-container">

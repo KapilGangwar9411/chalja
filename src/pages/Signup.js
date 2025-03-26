@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 import { auth, database } from '../firebase/config';
 import '../assets/styles.css';
@@ -42,26 +42,33 @@ const Signup = () => {
       const user = userCredential.user;
       console.log('User created successfully:', user.uid);
 
-      // Store additional user data in Realtime Database
-      console.log('Storing user data in database...');
-      await set(ref(database, `users/${user.uid}`), {
-        email: user.email,
-        approved: false,
-        createdAt: new Date().toISOString()
-      });
-      console.log('User data stored successfully');
+      try {
+        // Store additional user data in Realtime Database
+        console.log('Storing user data in database...');
+        await set(ref(database, `users/${user.uid}`), {
+          email: user.email,
+          approved: false,
+          createdAt: new Date().toISOString()
+        });
+        console.log('User data stored successfully');
 
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/admin');
-      }, 3000);
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/admin');
+        }, 3000);
+      } catch (dbError) {
+        console.error('Database write error:', dbError);
+        // If database write fails, delete the auth user
+        await deleteUser(user);
+        throw new Error('Failed to save user data: ' + dbError.message);
+      }
       
     } catch (error) {
       console.error('Detailed signup error:', error);
       
       switch (error.code) {
         case 'auth/email-already-in-use':
-          setError('This email is already registered');
+          setError('This email is already registered. Please try logging in instead.');
           break;
         case 'auth/invalid-email':
           setError('Invalid email address format');

@@ -767,6 +767,14 @@
   line-height: 1.4;
 }
 
+.error-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
 .retry-button {
   background-color: #007bff;
   color: white;
@@ -782,6 +790,38 @@
   background-color: #0056b3;
 }
 
+.watch-link {
+  background-color: transparent;
+  color: #007bff;
+  border: 1px solid #007bff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.watch-link:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.permission-note {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+  width: 100%;
+  max-width: 600px;
+}
+
+.note {
+  font-size: 0.85rem !important;
+  color: #888 !important;
+  font-style: italic;
+  margin: 0 !important;
+}
+
 @media (max-width: 768px) {
   .video-error {
     padding: 1.5rem;
@@ -795,7 +835,13 @@
     font-size: 0.9rem;
   }
 
-  .retry-button {
+  .error-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .retry-button,
+  .watch-link {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
   }
