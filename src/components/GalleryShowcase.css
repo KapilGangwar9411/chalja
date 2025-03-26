@@ -365,7 +365,7 @@
   .gallery-header h2 {
     font-size: 2rem;
   }
-  
+
   .gallery-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
@@ -622,7 +622,7 @@
 }
 
 .gallery-slit.active .slit-info {
-  opacity: 1;
+    opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
@@ -677,5 +677,55 @@
 
   .slit-info p {
     font-size: 0.8rem;
+  }
+}
+
+/* Video Showcase Styles */
+.video-showcase {
+  width: 100%;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 1rem;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.showcase-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .video-showcase {
+    height: 65vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-showcase {
+    height: 60vh;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-showcase {
+    height: 50vh;
   }
 }

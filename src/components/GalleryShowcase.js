@@ -1,78 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './GalleryShowcase.css';
 
 const GalleryShowcase = () => {
-  // Set initial activeIndex to 2 (middle image)
-  const [activeIndex, setActiveIndex] = useState(2);
-
-  // Photo data using images from public/images folder
-  const photos = [
-    {
-      id: 1,
-      title: 'Film Making Workshop',
-      location: 'Film Production',
-      imageUrl: '/images/img3.JPG',
-      date: 'March 2024'
-    },
-    {
-      id: 2,
-      title: 'Cinematography',
-      location: 'Camera Workshop',
-      imageUrl: '/images/cinematography.png',
-      date: 'March 2024'
-    },
-    {
-      id: 3,
-      title: 'Photo Walks',
-      location: 'Photography',
-      imageUrl: '/images/img3.JPG',
-      date: 'March 2024'
-    },
-    {
-      id: 4,
-      title: 'Video Editing',
-      location: 'Post Production',
-      imageUrl: '/images/editing.png',
-      date: 'March 2024'
-    },
-    {
-      id: 5,
-      title: 'Night Photo Walks',
-      location: 'Photography',
-      imageUrl: '/images/img3.JPG',
-      date: 'March 2024'
-    }
-  ];
-
-  const handleSlitClick = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
+  const videoUrl = "https://noidainstituteofengtech-my.sharepoint.com/personal/0221cse182_niet_co_in/_layouts/15/embed.aspx?UniqueId=9b9f2922-7365-49a6-bc0e-983fd8ce884a&embed=%7B%22af%22%3Atrue%2C%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create";
 
   return (
-    <div className="gallery-container">
-      <div className="gallery-slits">
-        {photos.map((photo, index) => (
-          <div
-            key={photo.id}
-            className={`gallery-slit ${activeIndex === index ? 'active' : ''} ${activeIndex !== null && activeIndex !== index ? 'inactive' : ''}`}
-            onClick={() => handleSlitClick(index)}
-            style={{
-              '--delay': `${index * 0.1}s`,
-              '--index': index
-            }}
-          >
-            <div className="slit-content">
-              <div className="slit-image">
-                <img src={photo.imageUrl} alt={photo.title} />
-              </div>
-              <div className="slit-info">
-                <h3>{photo.title}</h3>
-                <p>{photo.location}</p>
-                <span>{photo.date}</span>
-              </div>
-            </div>
-          </div>
-        ))}
+    <div className="video-showcase">
+      <div className="video-wrapper">
+        <iframe
+          src={`${videoUrl}&autoplay=1&mute=1`}
+          className="showcase-video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          title="final.mp4"
+          frameBorder="0"
+          scrolling="no"
+          loading="eager"
+        />
       </div>
     </div>
   );
