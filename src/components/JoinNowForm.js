@@ -44,13 +44,14 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     setLoading(true);
 
     try {
-      // Create a clean data object
+      // Create a clean data object for joinRequests
       const submitData = {
         ...formData,
         createdAt: new Date().toISOString(),
+        status: 'pending'
       };
 
-      // Save to Firebase
+      // Save to Firebase joinRequests
       const joinRequestsRef = ref(database, 'joinRequests');
       const newRequestRef = await push(joinRequestsRef, submitData);
 

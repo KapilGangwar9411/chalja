@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, database } from '../firebase';
 import { signOut } from 'firebase/auth';
-import { ref, get, update, remove, push } from 'firebase/database';
+import { ref, get, update, remove, push, onValue } from 'firebase/database';
 import Loader from '../components/Loader';
 import './AdminDashboard.css';
 
@@ -57,30 +57,40 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
+      // Set up real-time listener for users
       const usersRef = ref(database, 'users');
+      onValue(usersRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const usersData = snapshot.val();
+          const allUsersList = Object.entries(usersData)
+            .map(([id, data]) => ({
+              id,
+              ...data
+            }));
+          setAllUsers(allUsersList);
+          setStats(prevStats => ({
+            ...prevStats,
+            totalUsers: allUsersList.length
+          }));
+        } else {
+          setAllUsers([]);
+          setStats(prevStats => ({
+            ...prevStats,
+            totalUsers: 0
+          }));
+        }
+      });
+
+      // Fetch other stats
       const postsRef = ref(database, 'posts');
       const commentsRef = ref(database, 'comments');
       const joinRequestsRef = ref(database, 'joinRequests');
       
-      const [usersSnapshot, postsSnapshot, commentsSnapshot, requestsSnapshot] = await Promise.all([
-        get(usersRef),
+      const [postsSnapshot, commentsSnapshot, requestsSnapshot] = await Promise.all([
         get(postsRef),
         get(commentsRef),
         get(joinRequestsRef)
       ]);
-
-      // Get all users that are approved
-      let approvedUsers = [];
-      if (usersSnapshot.exists()) {
-        approvedUsers = Object.entries(usersSnapshot.val())
-          .map(([id, data]) => ({
-            id,
-            ...data
-          }))
-          .filter(user => user.isApproved); // Only count approved users
-        
-        setAllUsers(approvedUsers); // Set all users state
-      }
 
       // Count pending requests
       const pendingRequests = requestsSnapshot.exists() 
@@ -88,12 +98,12 @@ const AdminDashboard = () => {
           .filter(request => request.status === 'pending' || !request.status).length 
         : 0;
 
-      setStats({
-        totalUsers: approvedUsers.length, // Use the length of approved users
+      setStats(prevStats => ({
+        ...prevStats,
         totalPosts: postsSnapshot.exists() ? Object.keys(postsSnapshot.val()).length : 0,
         totalComments: commentsSnapshot.exists() ? Object.keys(commentsSnapshot.val()).length : 0,
         pendingRequests
-      });
+      }));
     } catch (err) {
       console.error('Error fetching stats:', err);
       setError('Failed to fetch dashboard statistics');
@@ -137,43 +147,43 @@ const AdminDashboard = () => {
         approvedBy: currentUser.uid
       });
 
-      // Your WhatsApp group invite link
-      const whatsappGroupLink = "https://chat.whatsapp.com/K64zrdrxJwY9Y1Bnrf46nd";
-      
-      // Create a new user in the users node
-      const newUserRef = ref(database, 'users');
-      const newUser = {
-        email: `${requestData.phone}@spectrum.com`,
-        isAdmin: false,
-        isSuperAdmin: false,
-        isApproved: true, // Make sure to set this flag
-        createdAt: new Date().toISOString(),
+      // Create user data object
+      const userData = {
         name: requestData.name,
         phone: requestData.phone,
         branch: requestData.branch,
         year: requestData.year,
         interest: requestData.interest,
-        whatsappGroupLink: whatsappGroupLink
+        email: `${requestData.phone}@spectrum.com`,
+        isAdmin: false,
+        isSuperAdmin: false,
+        isApproved: true,
+        createdAt: new Date().toISOString(),
+        joinRequestId: requestId,
+        approvedAt: new Date().toISOString(),
+        approvedBy: currentUser.uid
       };
 
-      // Push the new user data and get the reference
-      const newUserSnapshot = await push(newUserRef, newUser);
-      const newUserId = newUserSnapshot.key;
+      // Create new user record
+      const usersRef = ref(database, 'users');
+      const newUserRef = await push(usersRef, userData);
 
-      // Update allUsers state immediately
-      setAllUsers(prevUsers => [...prevUsers, {
-        id: newUserId,
-        ...newUser
-      }]);
-
-      // Send WhatsApp message with invite link
+      // Your WhatsApp group invite link
+      const whatsappGroupLink = "https://chat.whatsapp.com/K64zrdrxJwY9Y1Bnrf46nd";
+      
+      // Format phone number for WhatsApp
+      // Remove any non-digit characters and ensure it starts with country code
+      const formattedPhone = phoneNumber.replace(/\D/g, '');
+      const whatsappPhone = formattedPhone.startsWith('91') ? formattedPhone : `91${formattedPhone}`;
+      
+      // Send WhatsApp message with invite
       const whatsappMessage = `Welcome to Spectrum, ${requestData.name}! 🎉\n\n` +
         `Your application has been approved. Please join our WhatsApp group using this link:\n` +
         `${whatsappGroupLink}\n\n` +
         `We're excited to have you as part of Spectrum!`;
 
       // Open WhatsApp with the message
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+      const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMessage)}`;
       window.open(whatsappUrl, '_blank');
 
       // Update local stats immediately
@@ -240,19 +250,35 @@ const AdminDashboard = () => {
           <button className="close-button" onClick={() => setShowUsersModal(false)}>×</button>
         </div>
         <div className="users-list">
-          {allUsers.map(user => (
-            <div key={user.id} className="user-item">
-              <div className="user-info">
-                <h3>{user.name}</h3>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Phone:</strong> {user.phone}</p>
-                <p><strong>Branch:</strong> {user.branch}</p>
-                <p><strong>Year:</strong> {user.year}</p>
-                <p><strong>Interest:</strong> {user.interest}</p>
-                <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+          {allUsers.length === 0 ? (
+            <div className="no-data">No users found</div>
+          ) : (
+            allUsers.map(user => (
+              <div key={user.id} className="user-item">
+                <div className="user-info">
+                  <h3>{user.name}</h3>
+                  <p><strong>Email:</strong> {user.email}</p>
+                  <p><strong>Phone:</strong> {user.phone}</p>
+                  <p><strong>Branch:</strong> {user.branch}</p>
+                  <p><strong>Year:</strong> {user.year}</p>
+                  <p><strong>Interest:</strong> {user.interest}</p>
+                  <p><strong>Status:</strong> <span className={`status-badge ${user.isApproved ? 'approved' : 'pending'}`}>
+                    {user.isApproved ? 'Approved' : 'Pending'}
+                  </span></p>
+                  <p><strong>Role:</strong> <span className={`role-badge ${user.isSuperAdmin ? 'super-admin' : user.isAdmin ? 'admin' : 'user'}`}>
+                    {user.isSuperAdmin ? 'Super Admin' : user.isAdmin ? 'Admin' : 'User'}
+                  </span></p>
+                  <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+                  {user.approvedAt && (
+                    <p><strong>Approved On:</strong> {new Date(user.approvedAt).toLocaleDateString()}</p>
+                  )}
+                  {user.approvedBy && (
+                    <p><strong>Approved By:</strong> {user.approvedBy}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
