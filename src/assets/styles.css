@@ -2848,7 +2848,7 @@ select.input-field {
 
 .support-member-photo {
   position: relative;
-  height: 160px;
+  height: 200px;
   background-size: cover;
   background-position: center;
 }
@@ -2905,7 +2905,7 @@ select.input-field {
   }
   
   .support-member-photo {
-    height: 140px;
+    height: 160px;
   }
 }
 
@@ -2923,7 +2923,7 @@ select.input-field {
   }
   
   .support-member-photo {
-    height: 120px;
+    height: 140px;
   }
   
   .support-member-name {

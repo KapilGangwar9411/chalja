@@ -56,7 +56,7 @@ const AdminDashboard = () => {
         
         fetchStats();
         fetchJoinRequests();
-      } else {
+            } else {
         navigate('/admin-login');
       }
     });
@@ -301,6 +301,7 @@ const AdminDashboard = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [imagePreview, setImagePreview] = useState('');
     const [isUploading, setIsUploading] = useState(false);
+    const [activeTab, setActiveTab] = useState('basic');
     const imgbbApiKey = 'a76462040ea5f041b5e64d5821588810';
 
     const handleChange = (e) => {
@@ -508,7 +509,10 @@ const AdminDashboard = () => {
       <div className="modal-overlay" onClick={() => setShowEventsModal(false)}>
         <div className="modal-content event-modal" onClick={e => e.stopPropagation()}>
           <div className="modal-header">
-            <h2>Create New Event</h2>
+            <div className="header-content">
+              <h2>Create New Event</h2>
+              <p className="header-subtitle">Fill in the details to create your event</p>
+            </div>
             <button 
               className="close-button" 
               onClick={() => setShowEventsModal(false)}
@@ -521,178 +525,221 @@ const AdminDashboard = () => {
             </button>
           </div>
           
+          <div className="modal-tabs">
+            <button 
+              className={`tab-button ${activeTab === 'basic' ? 'active' : ''}`}
+              onClick={() => setActiveTab('basic')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+              </svg>
+              Basic Info
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'details' ? 'active' : ''}`}
+              onClick={() => setActiveTab('details')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Event Details
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'pricing' ? 'active' : ''}`}
+              onClick={() => setActiveTab('pricing')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              Pricing & Seats
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="event-form">
-            <div className="form-grid">
-              <div className="form-group full-width">
-                <label htmlFor="eventTitle">Event Title *</label>
-                <input
-                  id="eventTitle"
-                  type="text"
-                  placeholder="Enter a descriptive title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className={errors.title ? 'error' : ''}
-                />
-                {errors.title && <span className="error-message">{errors.title}</span>}
-              </div>
-
-              <div className="form-group full-width">
-                <label htmlFor="eventDescription">Description *</label>
-                <textarea
-                  id="eventDescription"
-                  placeholder="Provide a detailed description of the event"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className={errors.description ? 'error' : ''}
-                  rows="4"
-                ></textarea>
-                {errors.description && <span className="error-message">{errors.description}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="eventDate">Event Date *</label>
-                <input
-                  id="eventDate"
-                  type="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className={errors.date ? 'error' : ''}
-                  min={new Date().toISOString().split('T')[0]}
-                />
-                {errors.date && <span className="error-message">{errors.date}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="eventTime">Event Time *</label>
-                <input
-                  id="eventTime"
-                  type="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  className={errors.time ? 'error' : ''}
-                />
-                {errors.time && <span className="error-message">{errors.time}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="eventVenue">Venue *</label>
-                <input
-                  id="eventVenue"
-                  type="text"
-                  placeholder="Event location"
-                  value={formData.venue}
-                  onChange={handleChange}
-                  className={errors.venue ? 'error' : ''}
-                />
-                {errors.venue && <span className="error-message">{errors.venue}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="eventCategory">Category *</label>
-                <select
-                  id="eventCategory"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className={errors.category ? 'error' : ''}
-                >
-                  <option value="">Select a category</option>
-                  {categories.map(category => (
-                    <option key={category.value} value={category.value}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-                {errors.category && <span className="error-message">{errors.category}</span>}
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="eventRegistrationFee">Registration Fee *</label>
-                <div className="fee-input-group">
-                  <span className="currency-symbol">₹</span>
+            {activeTab === 'basic' && (
+              <div className="form-section">
+                <div className="form-group full-width">
+                  <label htmlFor="eventTitle">Event Title *</label>
                   <input
-                    id="eventRegistrationFee"
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="0"
-                    value={formData.registrationFee}
+                    id="eventTitle"
+                    type="text"
+                    placeholder="Enter a descriptive title"
+                    value={formData.title}
                     onChange={handleChange}
-                    className={errors.registrationFee ? 'error' : ''}
+                    className={errors.title ? 'error' : ''}
                   />
+                  {errors.title && <span className="error-message">{errors.title}</span>}
                 </div>
-                {errors.registrationFee && <span className="error-message">{errors.registrationFee}</span>}
-                <span className="helper-text">Enter 0 for free events</span>
-              </div>
 
-              <div className="form-group">
-                <label htmlFor="eventSeats">Available Seats *</label>
-                <input
-                  id="eventSeats"
-                  type="number"
-                  min="1"
-                  placeholder="Number of seats"
-                  value={formData.seats}
-                  onChange={handleChange}
-                  className={errors.seats ? 'error' : ''}
-                />
-                {errors.seats && <span className="error-message">{errors.seats}</span>}
-              </div>
+                <div className="form-group">
+                  <label htmlFor="eventCategory">Category *</label>
+                  <select
+                    id="eventCategory"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className={errors.category ? 'error' : ''}
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map(category => (
+                      <option key={category.value} value={category.value}>
+                        {category.icon} {category.label}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.category && <span className="error-message">{errors.category}</span>}
+                </div>
 
-              <div className="form-group full-width">
-                <label htmlFor="eventImage">Event Image *</label>
-                <div className="image-upload-container">
-                  <div className="image-input-group">
-                    <input
-                      id="eventImage"
-                      type="url"
-                      placeholder="Image URL will appear here"
-                      value={formData.image}
-                      onChange={handleChange}
-                      className={errors.image ? 'error' : ''}
-                      readOnly
-                    />
-                    <div className="upload-button-wrapper">
+                <div className="form-group">
+                  <label htmlFor="eventImage">Event Image *</label>
+                  <div className="image-upload-container">
+                    <div className="image-input-group">
                       <input
-                        type="file"
-                        id="imageUpload"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        disabled={isUploading}
+                        id="eventImage"
+                        type="url"
+                        placeholder="Image URL will appear here"
+                        value={formData.image}
+                        onChange={handleChange}
+                        className={errors.image ? 'error' : ''}
+                        readOnly
                       />
-                      <label htmlFor="imageUpload" className={`upload-button ${isUploading ? 'uploading' : ''}`}>
-                        {isUploading ? (
-                          <>
-                            <svg className="spinner" viewBox="0 0 50 50">
-                              <circle cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
-                            </svg>
-                            Uploading...
-                          </>
-                        ) : (
-                          <>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                              <polyline points="17 8 12 3 7 8"></polyline>
-                              <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                            Upload Image
-                          </>
-                        )}
-                      </label>
+                      <div className="upload-button-wrapper">
+                        <input
+                          type="file"
+                          id="imageUpload"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={isUploading}
+                        />
+                        <label htmlFor="imageUpload" className={`upload-button ${isUploading ? 'uploading' : ''}`}>
+                          {isUploading ? (
+                            <>
+                              <svg className="spinner" viewBox="0 0 50 50">
+                                <circle cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+                              </svg>
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                              </svg>
+                              Upload Image
+                            </>
+                          )}
+                        </label>
+                      </div>
                     </div>
+                    {errors.image && <span className="error-message">{errors.image}</span>}
+                    {formData.image && (
+                      <div className="image-preview">
+                        <img 
+                          src={imagePreview} 
+                          alt="Event preview"
+                          onError={() => setImagePreview('')}
+                        />
+                      </div>
+                    )}
                   </div>
-                  {errors.image && <span className="error-message">{errors.image}</span>}
-                  {formData.image && (
-                    <div className="image-preview">
-                      <img 
-                        src={imagePreview} 
-                        alt="Event preview"
-                        onError={() => setImagePreview('')}
-                      />
-                    </div>
-                  )}
                 </div>
               </div>
-            </div>
+            )}
+
+            {activeTab === 'details' && (
+              <div className="form-section">
+                <div className="form-group full-width">
+                  <label htmlFor="eventDescription">Description *</label>
+                  <textarea
+                    id="eventDescription"
+                    placeholder="Provide a detailed description of the event"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className={errors.description ? 'error' : ''}
+                    rows="4"
+                  ></textarea>
+                  {errors.description && <span className="error-message">{errors.description}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="eventDate">Event Date *</label>
+                  <input
+                    id="eventDate"
+                    type="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className={errors.date ? 'error' : ''}
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                  {errors.date && <span className="error-message">{errors.date}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="eventTime">Event Time *</label>
+                  <input
+                    id="eventTime"
+                    type="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    className={errors.time ? 'error' : ''}
+                  />
+                  {errors.time && <span className="error-message">{errors.time}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="eventVenue">Venue *</label>
+                  <input
+                    id="eventVenue"
+                    type="text"
+                    placeholder="Event location"
+                    value={formData.venue}
+                    onChange={handleChange}
+                    className={errors.venue ? 'error' : ''}
+                  />
+                  {errors.venue && <span className="error-message">{errors.venue}</span>}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'pricing' && (
+              <div className="form-section">
+                <div className="form-group">
+                  <label htmlFor="eventRegistrationFee">Registration Fee *</label>
+                  <div className="fee-input-group">
+                    <span className="currency-symbol">₹</span>
+                    <input
+                      id="eventRegistrationFee"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      value={formData.registrationFee}
+                      onChange={handleChange}
+                      className={errors.registrationFee ? 'error' : ''}
+                    />
+                  </div>
+                  {errors.registrationFee && <span className="error-message">{errors.registrationFee}</span>}
+                  <span className="helper-text">Enter 0 for free events</span>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="eventSeats">Available Seats *</label>
+                  <input
+                    id="eventSeats"
+                    type="number"
+                    min="1"
+                    placeholder="Number of seats"
+                    value={formData.seats}
+                    onChange={handleChange}
+                    className={errors.seats ? 'error' : ''}
+                  />
+                  {errors.seats && <span className="error-message">{errors.seats}</span>}
+                </div>
+              </div>
+            )}
 
             {errors.submit && (
               <div className="form-error-message">
@@ -701,21 +748,44 @@ const AdminDashboard = () => {
             )}
 
             <div className="form-actions">
-              <button 
-                type="button" 
-                className="btn-secondary" 
-                onClick={() => setShowEventsModal(false)}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-              <button 
-                type="submit" 
-                className="btn-primary"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Creating...' : 'Create Event'}
-              </button>
+              <div className="tab-navigation">
+                {activeTab !== 'basic' && (
+                  <button 
+                    type="button" 
+                    className="btn-secondary"
+                    onClick={() => setActiveTab(activeTab === 'pricing' ? 'details' : 'basic')}
+                  >
+                    Previous
+                  </button>
+                )}
+              </div>
+              <div className="action-buttons">
+                <button 
+                  type="button" 
+                  className="btn-secondary" 
+                  onClick={() => setShowEventsModal(false)}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </button>
+                {activeTab === 'pricing' ? (
+                  <button 
+                    type="submit" 
+                    className="btn-primary"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Creating...' : 'Create Event'}
+                  </button>
+                ) : (
+                  <button 
+                    type="button" 
+                    className="btn-primary"
+                    onClick={() => setActiveTab(activeTab === 'basic' ? 'details' : 'pricing')}
+                  >
+                    Next
+                  </button>
+                )}
+              </div>
             </div>
           </form>
         </div>

@@ -27,7 +27,7 @@ const teamMembers = [
   {
     name: 'Kapil Gangwar',
     title: 'Vice President',
-    image: '/images/image1.png',
+    image: '/images/kapil.jpg',
     instagram: 'https://www.instagram.com/brandup.creatives/?igsh=Y3hoZ3Q1dGU3eGt6',
     linkedin: 'https://www.linkedin.com/in/kapil-gangwar-1bbb40251',
   },
@@ -37,7 +37,7 @@ const supportTeamMembers = [
   {
     name: 'Alok Kumar',
     title: 'Technical Head',
-    image: '/images/team/technical.jpg',
+    image: '/images/alok.jpg',
   },
   {
     name: 'Saksham Patel',
@@ -47,7 +47,7 @@ const supportTeamMembers = [
   {
     name: 'Aditya Yadav',
     title: 'Cinematographer',
-    image: '/images/team/cinematographer.jpg',
+    image: '/images/aditya.jpg',
   },
   {
     name: 'Arya Anand',
@@ -58,7 +58,7 @@ const supportTeamMembers = [
     name: 'Shivani Rai',
     title: 'Content Director',
     image: '/images/team/content.jpg',
-  },
+  },  
 ];
 
 const TeamSection = () => {

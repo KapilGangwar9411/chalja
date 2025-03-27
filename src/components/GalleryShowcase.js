@@ -50,20 +50,6 @@ const GalleryShowcase = () => {
     <div className="video-showcase" ref={videoRef}>
       <div className="heading-container">
         <h2 className="video-heading">Highlights of our recent event</h2>
-        <img 
-          src="/images/curved-line.png" 
-          alt="decorative curved line"
-          className="curved-line"
-          style={{
-            width: '300px',
-            height: '40px',
-            position: 'absolute',
-            bottom: '-20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            filter: 'brightness(0) saturate(100%) invert(55%) sepia(95%) saturate(3410%) hue-rotate(308deg) brightness(96%) contrast(96%)'
-          }}
-        />
       </div>
       <div className="video-wrapper" style={{ transform: `scale(${scale})` }}>
         {isLoading && !videoError && (
