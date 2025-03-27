@@ -42,7 +42,7 @@ const supportTeamMembers = [
   {
     name: 'Saksham Patel',
     title: 'Production Manager',
-    image: '/images/team/production.jpg',
+    image: '/images/saksham.jpg',
   },
   {
     name: 'Aditya Yadav',
@@ -52,7 +52,7 @@ const supportTeamMembers = [
   {
     name: 'Arya Anand',
     title: 'Graphic Designer',
-    image: '/images/team/designer.jpg',
+    image: '/images/arya.jpg',
   },
   {
     name: 'Shivani Rai',

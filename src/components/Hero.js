@@ -81,6 +81,10 @@ const Hero = ({ openForm }) => {
                       <Link to="/short-films">
                         <h2>{image.title}</h2>
                       </Link>
+                    ) : index === 2 ? (
+                      <Link to="/video-editing">
+                        <h2>{image.title}</h2>
+                      </Link>
                     ) : (
                       <h2>{image.title}</h2>
                     )}

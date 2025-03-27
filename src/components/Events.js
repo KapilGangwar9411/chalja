@@ -1,85 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { database } from '../firebase';
+import { ref, onValue } from 'firebase/database';
 import '../assets/styles.css';
+import Loader from './Loader';
 
 const Events = () => {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('upcoming');
+  const [events, setEvents] = useState({ upcoming: [], past: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: "Arambh",
-      date: "September 28, 2024",
-      time: "10:00 AM",
-      venue: "Main Auditorium",
-      category: "Workshop",
-      description: "A workshop by the students, for the students.",
-      image: "images/workshop.png",
-      registrationFee: "Free",
-      seats: 100
-    },
-    {
-      id: 2,
-      title: "Film Screening",
-      date: "October 10, 2024",
-      time: "6:00 PM",
-      venue: "Open Air Theatre",
-      category: "Entertainment",
-      description: "Join us for a screening of short films.",
-      image: "images/filmscreening.png",
-      registrationFee: "₹50",
-      seats: 200
-    }
-  ];
+  useEffect(() => {
+    try {
+      const eventsRef = ref(database, 'events');
+      const unsubscribe = onValue(eventsRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const eventsData = snapshot.val();
+          const eventsArray = Object.entries(eventsData).map(([id, data]) => {
+            const eventDate = new Date(data.date);
+            const now = new Date();
+            
+            return {
+              id,
+              ...data,
+              availableSeats: data.seats - (data.participants || 0),
+              status: eventDate >= now ? 'upcoming' : 'past'
+            };
+          });
 
-  const pastEvents = [
-    {
-      id: 3,
-      title: "Lights, Camera, Diwali",
-      date: "November 12, 2023",
-      venue: "College Campus",
-      category: "Competition",
-      description: "Video making competition.",
-      image: "images/lcdposter.png",
-      participants: 150
-    },
-    {
-      id: 4,
-      title: "Night Photowalks",
-      date: "March 4, 2023",
-      venue: "City Streets",
-      category: "Photography",
-      description: "Capture the streets in chaos.",
-      image: "images/PhotoWalks.png",
-      participants: 75
-    },
-    {
-      id: 5,
-      title: "Food Donations",
-      date: "January 26, 2023",
-      venue: "Community Center",
-      category: "Social",
-      description: "Learn editing techniques from professionals.",
-      image: "images/fooddonation.png",
-      participants: 200
-    },
-    {
-      id: 6,
-      title: "Aarambh (Entrepreneurship Session)",
-      date: "January 20, 2023",
-      venue: "Seminar Hall",
-      category: "Workshop",
-      description: "Learn editing techniques from professionals.",
-      image: "images/entreprenuer.png",
-      participants: 120
+          // Sort events by date
+          const upcoming = eventsArray
+            .filter(event => event.status === 'upcoming')
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+          
+          const past = eventsArray
+            .filter(event => event.status === 'past')
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          setEvents({ upcoming, past });
+        } else {
+          setEvents({ upcoming: [], past: [] });
+        }
+        setLoading(false);
+      }, (error) => {
+        console.error('Error fetching events:', error);
+        setError('Failed to load events. Please try again later.');
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    } catch (err) {
+      console.error('Error setting up events listener:', err);
+      setError('Failed to initialize events. Please try again later.');
+      setLoading(false);
     }
-  ];
+  }, []);
 
   const renderEventCard = (event, isPast = false) => (
     <div className="event-card-bms" key={event.id}>
       <div className="event-image-container">
-        <img src={event.image} alt={event.title} className="event-image-bms" />
+        <img 
+          src={event.image} 
+          alt={event.title} 
+          className="event-image-bms"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/images/default-event.png';
+          }}
+        />
         <div className="event-category">{event.category}</div>
       </div>
       <div className="event-details-bms">
@@ -87,7 +77,12 @@ const Events = () => {
         <div className="event-info">
           <div className="info-item">
             <i className="far fa-calendar"></i>
-            <span>{event.date}</span>
+            <span>{new Date(event.date).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</span>
           </div>
           {!isPast && (
             <div className="info-item">
@@ -102,25 +97,45 @@ const Events = () => {
           {!isPast ? (
             <div className="event-registration">
               <div className="registration-info">
-                <span className="fee">{event.registrationFee}</span>
-                <span className="seats">{event.seats} seats available</span>
+                <span className="fee">
+                  {event.registrationFee === 0 ? 'Free' : `₹${event.registrationFee}`}
+                </span>
+                <span className="seats">
+                  {event.availableSeats} seats available
+                </span>
               </div>
               <button 
                 className="register-button"
                 onClick={() => navigate(`/events/${event.id}`)}
+                disabled={event.availableSeats <= 0}
               >
-                Register Now
+                {event.availableSeats <= 0 ? 'Sold Out' : 'Register Now'}
               </button>
             </div>
           ) : (
             <div className="past-event-stats">
-              <span>{event.participants} Participants</span>
+              <span>{event.participants || 0} Participants</span>
             </div>
           )}
         </div>
       </div>
     </div>
   );
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <p className="error-message">{error}</p>
+        <button onClick={() => window.location.reload()} className="retry-button">
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -149,14 +164,14 @@ const Events = () => {
 
         <div className="events-container-bms">
           {activeFilter === 'upcoming' ? (
-            upcomingEvents.length > 0 ? (
-              upcomingEvents.map(event => renderEventCard(event))
+            events.upcoming && events.upcoming.length > 0 ? (
+              events.upcoming.map(event => renderEventCard(event))
             ) : (
               <div className="no-events">No upcoming events at the moment</div>
             )
           ) : (
-            pastEvents.length > 0 ? (
-              pastEvents.map(event => renderEventCard(event, true))
+            events.past && events.past.length > 0 ? (
+              events.past.map(event => renderEventCard(event, true))
             ) : (
               <div className="no-events">No past events to show</div>
             )

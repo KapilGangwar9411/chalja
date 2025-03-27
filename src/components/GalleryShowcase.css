@@ -370,7 +370,7 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
   }
-  
+
   .gallery-modal-grid {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -602,7 +602,7 @@
 .slit-info p {
   font-size: 0.9rem;
   margin: 0;
-  opacity: 0.9;
+    opacity: 0.9;
 }
 
 .slit-info span {
@@ -758,7 +758,7 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
+    font-size: 1rem;
   transition: background-color 0.2s ease;
 }
 
@@ -887,7 +887,7 @@
 @media screen and (min-resolution: 192dpi) {
   .video-wrapper {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-    position: relative;
+  position: relative;
     bottom: -15vh;
   }
 }

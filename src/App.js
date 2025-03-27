@@ -20,6 +20,8 @@ import Signup from './pages/Signup';
 import { setupSuperAdmin } from './utils/setupSuperAdmin';
 import ErrorBoundary from './components/ErrorBoundary';
 import Loader from './components/Loader';
+import VideoEditing from './components/VideoEditing/VideoEditing';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Error Page component
 const ErrorPage = () => (
@@ -83,32 +85,35 @@ function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <Suspense fallback={<Loader />}>
-        <ImagePreloader />
-        <FontPreloader />
-        <Router>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/short-films" element={<ShortFilms />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/events/2" element={<AboutFilmscreening />} />
-              <Route path="/events/1" element={<ArambhEvent />} />
-              <Route path="/events/3" element={<LightsCameraDiwali />} />
-              <Route path="/events/4" element={<Nightphoto />} />
-              <Route path="/events/5" element={<Food />} />
-              <Route path="/admin-login" element={<AdminLogin />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/super-dashboard" element={<SuperAdminDashboard />} />
-              <Route path="/lcdiwali" element={<LcDiwali />} />
-              <Route path="*" element={<ErrorPage />} />
-            </Routes>
-          </Layout>
-        </Router>
-      </Suspense>
-    </ErrorBoundary>
+    <HelmetProvider>
+      <ErrorBoundary>
+        <Suspense fallback={<Loader />}>
+          <ImagePreloader />
+          <FontPreloader />
+          <Router>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/short-films" element={<ShortFilms />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/events/2" element={<AboutFilmscreening />} />
+                <Route path="/events/1" element={<ArambhEvent />} />
+                <Route path="/events/3" element={<LightsCameraDiwali />} />
+                <Route path="/events/4" element={<Nightphoto />} />
+                <Route path="/events/5" element={<Food />} />
+                <Route path="/admin-login" element={<AdminLogin />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/super-dashboard" element={<SuperAdminDashboard />} />
+                <Route path="/lcdiwali" element={<LcDiwali />} />
+                <Route path="/video-editing" element={<VideoEditing />} />
+                <Route path="*" element={<ErrorPage />} />
+              </Routes>
+            </Layout>
+          </Router>
+        </Suspense>
+      </ErrorBoundary>
+    </HelmetProvider>
   );
 }
 
