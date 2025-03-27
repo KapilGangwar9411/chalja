@@ -1,13 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './GalleryShowcase.css';
 
 const GalleryShowcase = () => {
   const [videoError, setVideoError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [scale, setScale] = useState(0.7); // Initial scale
+  const videoRef = useRef(null);
   
   const videoId = '1069577133';
   const embedUrl = `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&loop=1&autopause=0&muted=1&controls=0&quality=4k&playsinline=1&dnt=1`;
   const directVideoUrl = `https://vimeo.com/${videoId}`;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!videoRef.current) return;
+      
+      const rect = videoRef.current.getBoundingClientRect();
+      const scrollProgress = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)));
+      
+      // Scale from 0.7 to 1 based on scroll progress
+      const newScale = 0.7 + (scrollProgress * 0.3);
+      setScale(newScale);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleVideoError = () => {
     setVideoError(true);
@@ -29,8 +47,25 @@ const GalleryShowcase = () => {
   };
 
   return (
-    <div className="video-showcase">
-      <div className="video-wrapper">
+    <div className="video-showcase" ref={videoRef}>
+      <div className="heading-container">
+        <h2 className="video-heading">Highlights of our recent event</h2>
+        <img 
+          src="/images/curved-line.png" 
+          alt="decorative curved line"
+          className="curved-line"
+          style={{
+            width: '300px',
+            height: '40px',
+            position: 'absolute',
+            bottom: '-20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            filter: 'brightness(0) saturate(100%) invert(55%) sepia(95%) saturate(3410%) hue-rotate(308deg) brightness(96%) contrast(96%)'
+          }}
+        />
+      </div>
+      <div className="video-wrapper" style={{ transform: `scale(${scale})` }}>
         {isLoading && !videoError && (
           <div className="video-loading">
             <div className="loading-content">
