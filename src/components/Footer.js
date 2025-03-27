@@ -3,20 +3,22 @@ import '../assets/styles.css';
 
 const Footer = () => {
   return (
-    <footer className="footer-section">
+    <footer className="footer">
       <div className="footer-content">
-        <p>
-          Designed and developed by
+        <h2 className="footer-tagline">
+          <span className="tagline-first">fading moments, </span>
+          <span className="tagline-second">eternal frames.</span>
+        </h2>
+        <div className="footer-credit">
+          Developed with<span className="footer-heart">♥</span>by
           <a 
-            href="https://brandupcreatives.in" 
+            href="https://brandupcreatives.in/" 
             target="_blank" 
-            rel="noopener noreferrer" 
-            className="footer-link"
+            rel="noopener noreferrer"
           >
-            <br></br>
             brandupcreatives.in👋
           </a>
-        </p>
+        </div>
       </div>
     </footer>
   );
