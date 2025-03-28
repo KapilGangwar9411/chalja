@@ -65,8 +65,13 @@ const AdminLogin = () => {
     try {
       setLoading(true);
       setError('');
+      
+      // First try to sign in
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const userRef = ref(database, `users/${userCredential.user.uid}`);
+      const uid = userCredential.user.uid;
+      
+      // Then check user data in database
+      const userRef = ref(database, `users/${uid}`);
       const snapshot = await get(userRef);
       
       if (snapshot.exists()) {
@@ -82,14 +87,23 @@ const AdminLogin = () => {
           setError(`Access denied. ${adminType === 'superadmin' ? 'Super Admin' : 'Admin'} privileges required.`);
         }
       } else {
-        await auth.signOut();
-        setError('User not found.');
+        // If user exists in auth but not in database, delete the auth user
+        await deleteUser(userCredential.user);
+        setError('Account not properly set up. Please sign up again.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.message.includes('auth/invalid-credential') 
-        ? 'Invalid email or password' 
-        : 'An error occurred during login. Please try again.');
+      if (error.code === 'auth/invalid-credential') {
+        setError('Invalid email or password. Please try again.');
+      } else if (error.code === 'auth/user-not-found') {
+        setError('No account found with this email. Please sign up first.');
+      } else if (error.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again.');
+      } else if (error.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError('An error occurred during login. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -126,11 +140,11 @@ const AdminLogin = () => {
       setLoading(true);
       setError('');
       
-      // First create the authentication user
+      // Create new user directly without checking first
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       
-      // Then check for existing super admin
+      // Check for existing super admin
       const usersRef = ref(database, 'users');
       const snapshot = await get(usersRef);
       const isFirstSuperAdmin = !snapshot.exists() || 
@@ -145,22 +159,15 @@ const AdminLogin = () => {
         createdAt: new Date().toISOString()
       };
 
-      try {
-        // Save user data to database
-        const userRef = ref(database, `users/${uid}`);
-        await set(userRef, userData);
+      // Save user data to database
+      const userRef = ref(database, `users/${uid}`);
+      await set(userRef, userData);
 
-        setIsSignup(false);
-        if (adminType === 'superadmin' && isFirstSuperAdmin) {
-          setError('Super admin account created successfully. You can now log in.');
-        } else {
-          setError('Account created successfully. Please wait for approval from a super admin.');
-        }
-      } catch (dbError) {
-        console.error('Database write error:', dbError);
-        // If database write fails, delete the auth user
-        await deleteUser(userCredential.user);
-        throw new Error('Failed to save user data: ' + dbError.message);
+      setIsSignup(false);
+      if (adminType === 'superadmin' && isFirstSuperAdmin) {
+        setError('Super admin account created successfully. You can now log in.');
+      } else {
+        setError('Account created successfully. Please wait for approval from a super admin.');
       }
     } catch (error) {
       console.error('Signup error:', error);
@@ -170,8 +177,10 @@ const AdminLogin = () => {
         setError('Invalid email address');
       } else if (error.code === 'auth/weak-password') {
         setError('Password is too weak. Please use at least 6 characters');
-      } else if (error.message) {
-        setError(error.message);
+      } else if (error.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else if (error.message.includes('PERMISSION_DENIED')) {
+        setError('Permission denied. Please check your database rules.');
       } else {
         setError('An error occurred during signup. Please try again.');
       }

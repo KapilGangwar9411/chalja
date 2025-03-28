@@ -1041,4 +1041,151 @@
     flex-direction: column;
     gap: 8px;
   }
+}
+
+.about-event-editor {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.about-event-editor:focus-within {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+.about-event-editor textarea {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  resize: vertical;
+  min-height: 150px;
+  font-family: inherit;
+  line-height: 1.6;
+  color: #333;
+  background: transparent;
+}
+
+.about-event-editor textarea:focus {
+  outline: none;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.toolbar-button {
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-button:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.toolbar-button.active {
+  background: #e3f2fd;
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.google-form-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.google-form-input input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.google-form-input input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+.form-link-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #666;
+  font-size: 14px;
+}
+
+.form-link-preview svg {
+  color: #4a90e2;
+}
+
+.helper-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Error states */
+.about-event-editor.error,
+.google-form-input input.error {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .google-form-input {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-link-preview {
+    justify-content: center;
+  }
+
+  .editor-toolbar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Animation for tab transitions */
+.form-section {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 } 

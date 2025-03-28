@@ -14,15 +14,15 @@ const teamMembers = [
     name: 'Hardik Ojha',
     title: 'Vice President',
     image: '/images/hardik.jpg',
-    instagram: 'https://www.instagram.com/hardik_ojha_?igsh=dDQ3eHFxemhhdTd1&utm_source=qr', // Replace with actual URL
-    linkedin: 'https://www.linkedin.com/in/hardik-ojha-96328b304', // Replace with actual URL
+    instagram: 'https://www.instagram.com/hardik_ojha_?igsh=dDQ3eHFxemhhdTd1&utm_source=qr',
+    linkedin: 'https://www.linkedin.com/in/hardik-ojha-96328b304',
   },
   {
     name: 'Ayush Shukla',
     title: 'President',
     image: '/images/shukla.jpg',
-    instagram: 'https://www.instagram.com/ayush_shukla09?igsh=MnRrNmdsOXQzMnUxr', // Replace with actual URL
-    linkedin: 'https://www.linkedin.com/in/ayush-shukla-20b755250s', // Replace with actual URL
+    instagram: 'https://www.instagram.com/ayush_shukla09?igsh=MnRrNmdsOXQzMnUxr',
+    linkedin: 'https://www.linkedin.com/in/ayush-shukla-20b755250s',
   },
   {
     name: 'Kapil Gangwar',
@@ -57,7 +57,7 @@ const supportTeamMembers = [
   {
     name: 'Shivani Rai',
     title: 'Content Director',
-    image: '/images/team/content.jpg',
+    image: '/images/shivani.jpg',
   },  
 ];
 

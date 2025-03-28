@@ -288,6 +288,8 @@ const AdminDashboard = () => {
     const [formData, setFormData] = useState({
       title: '',
       description: '',
+      aboutEvent: '',
+      googleFormLink: '',
       date: '',
       time: '',
       venue: '',
@@ -325,10 +327,23 @@ const AdminDashboard = () => {
         setImagePreview(value);
       }
 
-      setFormData(prev => ({
-        ...prev,
-        [fieldName]: value
-      }));
+      // Handle special cases for aboutEvent and googleFormLink
+      if (fieldName === 'about') {
+        setFormData(prev => ({
+          ...prev,
+          aboutEvent: value
+        }));
+      } else if (fieldName === 'googleform') {
+        setFormData(prev => ({
+          ...prev,
+          googleFormLink: value
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [fieldName]: value
+        }));
+      }
 
       if (errors[fieldName]) {
         setErrors(prev => ({
@@ -399,12 +414,20 @@ const AdminDashboard = () => {
       
       if (!formData.title.trim()) newErrors.title = 'Please enter an event title';
       if (!formData.description.trim()) newErrors.description = 'Please provide a description';
+      if (!formData.aboutEvent.trim()) newErrors.aboutEvent = 'Please provide information about the event';
+      if (!formData.googleFormLink.trim()) newErrors.googleFormLink = 'Please provide a Google Form link';
       if (!formData.date) newErrors.date = 'Please select an event date';
       if (!formData.time) newErrors.time = 'Please select an event time';
       if (!formData.venue.trim()) newErrors.venue = 'Please specify the venue';
       if (!formData.category) newErrors.category = 'Please select a category';
       if (!formData.image.trim()) newErrors.image = 'Please provide an image URL';
       if (!formData.seats || formData.seats < 1) newErrors.seats = 'Please enter a valid number of seats';
+
+      // Validate Google Form link
+      const googleFormPattern = /^https:\/\/docs\.google\.com\/forms\/d\/e\/[a-zA-Z0-9_-]+\/viewform/;
+      if (formData.googleFormLink && !googleFormPattern.test(formData.googleFormLink)) {
+        newErrors.googleFormLink = 'Please enter a valid Google Form link';
+      }
 
       if (formData.registrationFee === '') {
         newErrors.registrationFee = 'Please enter the registration fee (0 for free events)';
@@ -453,6 +476,8 @@ const AdminDashboard = () => {
         const eventData = {
           title: formData.title.trim(),
           description: formData.description.trim(),
+          aboutEvent: formData.aboutEvent.trim(),
+          googleFormLink: formData.googleFormLink.trim(),
           date: formData.date,
           time: formData.time,
           venue: formData.venue.trim(),
@@ -469,8 +494,8 @@ const AdminDashboard = () => {
 
         // Validate all required fields are present and of correct type
         const requiredFields = [
-          'title', 'description', 'date', 'time', 'venue', 
-          'category', 'image', 'registrationFee', 'seats'
+          'title', 'description', 'aboutEvent', 'googleFormLink', 'date', 
+          'time', 'venue', 'category', 'image', 'registrationFee', 'seats'
         ];
 
         const missingFields = requiredFields.filter(field => !eventData[field]);
@@ -485,6 +510,8 @@ const AdminDashboard = () => {
         setFormData({
           title: '',
           description: '',
+          aboutEvent: '',
+          googleFormLink: '',
           date: '',
           time: '',
           venue: '',
@@ -545,6 +572,15 @@ const AdminDashboard = () => {
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
               Event Details
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'about' ? 'active' : ''}`}
+              onClick={() => setActiveTab('about')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+              About & Registration
             </button>
             <button 
               className={`tab-button ${activeTab === 'pricing' ? 'active' : ''}`}
@@ -704,6 +740,59 @@ const AdminDashboard = () => {
               </div>
             )}
 
+            {activeTab === 'about' && (
+              <div className="form-section">
+                <div className="form-group full-width">
+                  <label htmlFor="eventAbout">About Event *</label>
+                  <div className="about-event-editor">
+                    <textarea
+                      id="eventAbout"
+                      placeholder="Provide detailed information about the event, including objectives, benefits, and what participants can expect..."
+                      value={formData.aboutEvent}
+                      onChange={handleChange}
+                      className={errors.aboutEvent ? 'error' : ''}
+                      rows="6"
+                    ></textarea>
+                    <div className="editor-toolbar">
+                      <button type="button" className="toolbar-button" title="Bold">
+                        <i className="fas fa-bold"></i>
+                      </button>
+                      <button type="button" className="toolbar-button" title="Italic">
+                        <i className="fas fa-italic"></i>
+                      </button>
+                      <button type="button" className="toolbar-button" title="List">
+                        <i className="fas fa-list"></i>
+                      </button>
+                    </div>
+                  </div>
+                  {errors.aboutEvent && <span className="error-message">{errors.aboutEvent}</span>}
+                </div>
+
+                <div className="form-group full-width">
+                  <label htmlFor="eventGoogleForm">Google Form Link *</label>
+                  <div className="google-form-input">
+                    <input
+                      id="eventGoogleForm"
+                      type="url"
+                      placeholder="https://docs.google.com/forms/d/e/..."
+                      value={formData.googleFormLink}
+                      onChange={handleChange}
+                      className={errors.googleFormLink ? 'error' : ''}
+                    />
+                    <div className="form-link-preview">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                      </svg>
+                      <span>Registration Form</span>
+                    </div>
+                  </div>
+                  {errors.googleFormLink && <span className="error-message">{errors.googleFormLink}</span>}
+                  <span className="helper-text">Provide the Google Form link where participants can register</span>
+                </div>
+              </div>
+            )}
+
             {activeTab === 'pricing' && (
               <div className="form-section">
                 <div className="form-group">
@@ -753,7 +842,10 @@ const AdminDashboard = () => {
                   <button 
                     type="button" 
                     className="btn-secondary"
-                    onClick={() => setActiveTab(activeTab === 'pricing' ? 'details' : 'basic')}
+                    onClick={() => setActiveTab(
+                      activeTab === 'pricing' ? 'about' : 
+                      activeTab === 'about' ? 'details' : 'basic'
+                    )}
                   >
                     Previous
                   </button>
@@ -780,7 +872,10 @@ const AdminDashboard = () => {
                   <button 
                     type="button" 
                     className="btn-primary"
-                    onClick={() => setActiveTab(activeTab === 'basic' ? 'details' : 'pricing')}
+                    onClick={() => setActiveTab(
+                      activeTab === 'basic' ? 'details' : 
+                      activeTab === 'details' ? 'about' : 'pricing'
+                    )}
                   >
                     Next
                   </button>

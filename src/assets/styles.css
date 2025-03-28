@@ -2815,7 +2815,7 @@ select.input-field {
 /* Support Team Styles */
 .support-team-title {
   font-family: 'Bricolage', sans-serif;
-  font-size: 1.8rem;
+  font-size: 2.8rem;
   color: #444;
   margin: 40px 0 25px;
   text-align: center;
@@ -2892,7 +2892,7 @@ select.input-field {
 /* Media Queries for Support Team */
 @media (max-width: 768px) {
   .support-team-title {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     margin: 30px 0 20px;
   }
   
@@ -2911,7 +2911,7 @@ select.input-field {
 
 @media (max-width: 480px) {
   .support-team-title {
-    font-size: 1.3rem;
+    font-size: 2.5rem;
   }
   
   .support-team-container {
@@ -3129,7 +3129,7 @@ select.input-field {
 @media (max-width: 480px) {
   .footer-tagline {
     font-size: 1.5rem;
-    margin-left: 11px;
+    margin-left: 21px;
     text-align: left;
     letter-spacing: -1.5px;
   }
