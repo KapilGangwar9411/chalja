@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
-import { ref, set, get } from 'firebase/database';
+import { ref, set, get, query, orderByChild, equalTo } from 'firebase/database';
 import { auth, database } from '../firebase';
 import '../assets/styles.css';
 
@@ -29,10 +29,8 @@ const AdminLogin = () => {
           const superAdminExists = Object.values(users).some(user => user.isSuperAdmin);
           
           if (!superAdminExists) {
-            setError('No super admin exists. The first account created as super admin will be automatically approved.');
+            setError('No super admin exists. Please contact system administrator.');
           }
-        } else {
-          setError('No super admin exists. The first account created as super admin will be automatically approved.');
         }
       } catch (error) {
         console.error('Error checking super admin:', error);
@@ -76,6 +74,15 @@ const AdminLogin = () => {
       
       if (snapshot.exists()) {
         const userData = snapshot.val();
+        
+        // Check if user is approved
+        if (!userData.isApproved) {
+          await auth.signOut();
+          setError('Your account is pending approval from a super admin. Please wait for approval.');
+          return;
+        }
+
+        // Check admin type and privileges
         if (adminType === 'superadmin' && userData.isSuperAdmin) {
           // Super admin login successful
           navigate('/admin/super-dashboard');
@@ -134,55 +141,73 @@ const AdminLogin = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setError('');
+    setLoading(true);
+
+    // Prevent super admin signup
+    if (adminType === 'superadmin') {
+      setError('Super admin accounts can only be created by existing super admins.');
+      setLoading(false);
+      return;
+    }
 
     try {
-      setLoading(true);
-      setError('');
-      
-      // Create new user directly without checking first
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
-      
-      // Check for existing super admin
+      // Check if email already exists
       const usersRef = ref(database, 'users');
-      const snapshot = await get(usersRef);
-      const isFirstSuperAdmin = !snapshot.exists() || 
-        !Object.values(snapshot.val() || {}).some(user => user.isSuperAdmin);
-      
-      // Prepare user data
+      const usersSnapshot = await get(usersRef);
+      let emailExists = false;
+
+      if (usersSnapshot.exists()) {
+        usersSnapshot.forEach((userSnapshot) => {
+          if (userSnapshot.val().email === email) {
+            emailExists = true;
+          }
+        });
+      }
+
+      if (emailExists) {
+        setError('Email already in use');
+        setLoading(false);
+        return;
+      }
+
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Create user data object
       const userData = {
         email: email,
-        isAdmin: adminType === 'admin',
-        isSuperAdmin: adminType === 'superadmin',
-        isApproved: adminType === 'superadmin' ? isFirstSuperAdmin : false,
-        createdAt: new Date().toISOString()
+        isAdmin: true,
+        isSuperAdmin: false,
+        isApproved: false, // Always set to false for new admin signups
+        createdAt: new Date().toISOString(),
+        createdBy: auth.currentUser?.uid || null
       };
 
       // Save user data to database
-      const userRef = ref(database, `users/${uid}`);
-      await set(userRef, userData);
+      await set(ref(database, `users/${userCredential.user.uid}`), userData);
 
-      setIsSignup(false);
-      if (adminType === 'superadmin' && isFirstSuperAdmin) {
-        setError('Super admin account created successfully. You can now log in.');
-      } else {
-        setError('Account created successfully. Please wait for approval from a super admin.');
-      }
+      // Show pending approval message
+      setError('Admin account created successfully! Please wait for super admin approval.');
+      setTimeout(() => {
+        navigate('/admin-login');
+      }, 2000);
     } catch (error) {
       console.error('Signup error:', error);
       if (error.code === 'auth/email-already-in-use') {
-        setError('Email already in use. Please try logging in instead.');
+        setError('Email already in use');
       } else if (error.code === 'auth/invalid-email') {
         setError('Invalid email address');
       } else if (error.code === 'auth/weak-password') {
-        setError('Password is too weak. Please use at least 6 characters');
-      } else if (error.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your internet connection.');
-      } else if (error.message.includes('PERMISSION_DENIED')) {
-        setError('Permission denied. Please check your database rules.');
+        setError('Password is too weak');
+      } else if (error.code === 'auth/operation-not-allowed') {
+        setError('Operation not allowed. Please contact support.');
       } else {
-        setError('An error occurred during signup. Please try again.');
+        setError('Failed to create account. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -217,6 +242,7 @@ const AdminLogin = () => {
             className={`admin-type-button ${adminType === 'superadmin' ? 'active' : ''}`}
             onClick={() => setAdminType('superadmin')}
             type="button"
+            disabled={isSignup} // Disable super admin selection during signup
           >
             Super Admin
           </button>
@@ -289,7 +315,7 @@ const AdminLogin = () => {
               className="admin-button"
               disabled={loading}
             >
-              {loading ? 'Please wait...' : (isSignup ? `Sign Up as ${adminType === 'superadmin' ? 'Super Admin' : 'Admin'}` : 'Login')}
+              {loading ? 'Please wait...' : (isSignup ? 'Sign Up as Admin' : 'Login')}
             </button>
           </form>
         )}

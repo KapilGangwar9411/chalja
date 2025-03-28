@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, database } from '../firebase';
-import { signOut } from 'firebase/auth';
-import { ref, get, update, remove, push, onValue } from 'firebase/database';
+import { signOut, createUserWithEmailAndPassword } from 'firebase/auth';
+import { ref, get, update, remove, push, onValue, set } from 'firebase/database';
 import Loader from '../components/Loader';
 import './AdminDashboard.css';
 
@@ -16,6 +16,8 @@ const AdminDashboard = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
+    totalAdmins: 0,
+    totalSuperAdmins: 0,
     totalPosts: 0,
     totalComments: 0,
     pendingRequests: 0
@@ -23,6 +25,11 @@ const AdminDashboard = () => {
   const [joinRequests, setJoinRequests] = useState([]);
   const [showEventsModal, setShowEventsModal] = useState(false);
   const [events, setEvents] = useState([]);
+  const [selectedUserType, setSelectedUserType] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [sortBy, setSortBy] = useState('newest');
   const navigate = useNavigate();
 
   const categories = [
@@ -42,8 +49,9 @@ const AdminDashboard = () => {
         
         if (userSnapshot.exists()) {
           const userData = userSnapshot.val();
+          console.log('User data:', userData);
           setIsAdmin(userData.isAdmin || userData.isSuperAdmin);
-          setIsSuperAdmin(userData.isSuperAdmin);
+          setIsSuperAdmin(userData.isSuperAdmin === true);
           
           if (!userData.isAdmin && !userData.isSuperAdmin) {
             setError('Access denied. You must be an admin to view this page.');
@@ -100,6 +108,43 @@ const AdminDashboard = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (events.length > 0) {
+      let filtered = [...events];
+      
+      // Apply search filter
+      if (searchQuery) {
+        filtered = filtered.filter(event => 
+          event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.category.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+
+      // Apply sorting
+      switch (sortBy) {
+        case 'newest':
+          filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          break;
+        case 'oldest':
+          filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          break;
+        case 'title':
+          filtered.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case 'seats':
+          filtered.sort((a, b) => b.availableSeats - a.availableSeats);
+          break;
+        default:
+          break;
+      }
+
+      setFilteredEvents(filtered);
+    } else {
+      setFilteredEvents([]);
+    }
+  }, [events, searchQuery, sortBy]);
+
   const fetchStats = async () => {
     try {
       const usersRef = ref(database, 'users');
@@ -111,16 +156,26 @@ const AdminDashboard = () => {
               id,
               ...data
             }));
+          
+          // Count different types of users
+          const regularUsers = allUsersList.filter(user => !user.isAdmin && !user.isSuperAdmin).length;
+          const admins = allUsersList.filter(user => user.isAdmin && !user.isSuperAdmin).length;
+          const superAdmins = allUsersList.filter(user => user.isSuperAdmin).length;
+          
           setAllUsers(allUsersList);
           setStats(prevStats => ({
             ...prevStats,
-            totalUsers: allUsersList.length
+            totalUsers: regularUsers,
+            totalAdmins: admins,
+            totalSuperAdmins: superAdmins
           }));
         } else {
           setAllUsers([]);
           setStats(prevStats => ({
             ...prevStats,
-            totalUsers: 0
+            totalUsers: 0,
+            totalAdmins: 0,
+            totalSuperAdmins: 0
           }));
         }
       });
@@ -282,6 +337,11 @@ const AdminDashboard = () => {
       console.error('Error deleting event:', err);
       setError('Failed to delete event');
     }
+  };
+
+  const handleUserCardClick = (userType) => {
+    setSelectedUserType(userType);
+    setShowUsersModal(true);
   };
 
   const EventsModal = () => {
@@ -888,47 +948,76 @@ const AdminDashboard = () => {
     );
   };
 
-  const UsersModal = () => (
-    <div className="modal-overlay" onClick={() => setShowUsersModal(false)}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>All Users</h2>
-          <button className="close-button" onClick={() => setShowUsersModal(false)}>×</button>
-        </div>
-        <div className="users-list">
-          {allUsers.length === 0 ? (
-            <div className="no-data">No users found</div>
-          ) : (
-            allUsers.map(user => (
-              <div key={user.id} className="user-item">
-                <div className="user-info">
-                  <h3>{user.name}</h3>
-                  <p><strong>Email:</strong> {user.email}</p>
-                  <p><strong>Phone:</strong> {user.phone}</p>
-                  <p><strong>Branch:</strong> {user.branch}</p>
-                  <p><strong>Year:</strong> {user.year}</p>
-                  <p><strong>Interest:</strong> {user.interest}</p>
-                  <p><strong>Status:</strong> <span className={`status-badge ${user.isApproved ? 'approved' : 'pending'}`}>
-                    {user.isApproved ? 'Approved' : 'Pending'}
-                  </span></p>
-                  <p><strong>Role:</strong> <span className={`role-badge ${user.isSuperAdmin ? 'super-admin' : user.isAdmin ? 'admin' : 'user'}`}>
-                    {user.isSuperAdmin ? 'Super Admin' : user.isAdmin ? 'Admin' : 'User'}
-                  </span></p>
-                  <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-                  {user.approvedAt && (
-                    <p><strong>Approved On:</strong> {new Date(user.approvedAt).toLocaleDateString()}</p>
-                  )}
-                  {user.approvedBy && (
-                    <p><strong>Approved By:</strong> {user.approvedBy}</p>
-                  )}
+  const UsersModal = () => {
+    const filteredUsers = selectedUserType === 'regular' 
+      ? allUsers.filter(user => !user.isAdmin && !user.isSuperAdmin)
+      : selectedUserType === 'admin'
+      ? allUsers.filter(user => user.isAdmin && !user.isSuperAdmin)
+      : selectedUserType === 'superadmin'
+      ? allUsers.filter(user => user.isSuperAdmin)
+      : allUsers;
+
+    const getModalTitle = () => {
+      switch(selectedUserType) {
+        case 'regular':
+          return 'Regular Users';
+        case 'admin':
+          return 'Admin Users';
+        case 'superadmin':
+          return 'Super Admin Users';
+        default:
+          return 'All Users';
+      }
+    };
+
+    return (
+      <div className="modal-overlay" onClick={() => {
+        setShowUsersModal(false);
+        setSelectedUserType(null);
+      }}>
+        <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-header">
+            <h2>{getModalTitle()}</h2>
+            <button className="close-button" onClick={() => {
+              setShowUsersModal(false);
+              setSelectedUserType(null);
+            }}>×</button>
+          </div>
+          <div className="users-list">
+            {filteredUsers.length === 0 ? (
+              <div className="no-data">No users found</div>
+            ) : (
+              filteredUsers.map(user => (
+                <div key={user.id} className="user-item">
+                  <div className="user-info">
+                    <h3>{user.name}</h3>
+                    <p><strong>Email:</strong> {user.email}</p>
+                    <p><strong>Phone:</strong> {user.phone}</p>
+                    <p><strong>Branch:</strong> {user.branch}</p>
+                    <p><strong>Year:</strong> {user.year}</p>
+                    <p><strong>Interest:</strong> {user.interest}</p>
+                    <p><strong>Status:</strong> <span className={`status-badge ${user.isApproved ? 'approved' : 'pending'}`}>
+                      {user.isApproved ? 'Approved' : 'Pending'}
+                    </span></p>
+                    <p><strong>Role:</strong> <span className={`role-badge ${user.isSuperAdmin ? 'super-admin' : user.isAdmin ? 'admin' : 'user'}`}>
+                      {user.isSuperAdmin ? 'Super Admin' : user.isAdmin ? 'Admin' : 'User'}
+                    </span></p>
+                    <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+                    {user.approvedAt && (
+                      <p><strong>Approved On:</strong> {new Date(user.approvedAt).toLocaleDateString()}</p>
+                    )}
+                    {user.approvedBy && (
+                      <p><strong>Approved By:</strong> {user.approvedBy}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (loading) {
     return <Loader />;
@@ -955,13 +1044,13 @@ const AdminDashboard = () => {
             )}
           </div>
           <div className="header-actions">
-      {isSuperAdmin && (
+            {isSuperAdmin && (
               <button className="super-admin-button" onClick={() => navigate('/admin-login')}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                 </svg>
                 Super Admin Panel
-          </button>
+              </button>
             )}
             <button className="logout-button" onClick={handleLogout}>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -969,259 +1058,375 @@ const AdminDashboard = () => {
                 <polyline points="16 17 21 12 16 7"></polyline>
                 <line x1="21" y1="12" x2="9" y2="12"></line>
               </svg>
-          Logout
-        </button>
-      </div>
+              Logout
+            </button>
+          </div>
         </header>
 
-      {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
 
-        <section className="dashboard-stats">
-          <h2 className="section-title">Dashboard Overview</h2>
-          <div className="stats-container">
-            <div className="stat-card clickable" onClick={() => setShowUsersModal(true)}>
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{stats.totalUsers}</span>
-                <span className="stat-label">Total Users</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{stats.totalPosts}</span>
-                <span className="stat-label">Total Posts</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{stats.totalComments}</span>
-                <span className="stat-label">Total Comments</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="8.5" cy="7" r="4"></circle>
-                  <polyline points="20 8 14 14 20 8"></polyline>
-                </svg>
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{stats.pendingRequests}</span>
-                <span className="stat-label">Pending Requests</span>
-              </div>
-            </div>
-      </div>
-        </section>
+        <div className="dashboard-tabs">
+          <button 
+            className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Overview
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'events' ? 'active' : ''}`}
+            onClick={() => setActiveTab('events')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Events
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'users' ? 'active' : ''}`}
+            onClick={() => setActiveTab('users')}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Users
+          </button>
+        </div>
 
-        <section className="join-requests-section">
-          <h2 className="section-title">Join Requests</h2>
-          {joinRequests.length === 0 ? (
-            <div className="no-requests-message">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="8.5" cy="7" r="4"></circle>
-                <polyline points="20 8 14 14 20 8"></polyline>
-              </svg>
-              <p>No pending join requests</p>
-            </div>
-          ) : (
-            <div className="requests-grid">
-              {joinRequests.map((request) => (
-                <div key={request.id} className="request-card">
-                  <div className="request-info">
-                    <h3 className="request-name">{request.name}</h3>
-                    <div className="request-details">
-                      <p><strong>Phone:</strong> {request.phone}</p>
-                      <p><strong>Branch:</strong> {request.branch}</p>
-                      <p><strong>Year:</strong> {request.year}</p>
-                      <p><strong>Interest:</strong> {request.interest}</p>
-                      <p><strong>Applied:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
-                    </div>
+        {activeTab === 'overview' && (
+          <>
+            <section className="dashboard-stats">
+              <h2 className="section-title">Dashboard Overview</h2>
+              <div className="stats-container">
+                <div className="stat-card clickable" onClick={() => handleUserCardClick('regular')}>
+                  <div className="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                   </div>
-                  <div className="request-actions">
-                  <button
-                    className="approve-button"
-                      onClick={() => handleApproveRequest(request.id, request.phone, request)}
-                  >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    Approve
-                  </button>
-                  <button
-                    className="reject-button"
-                      onClick={() => handleRejectRequest(request.id)}
-                  >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    Reject
-                  </button>
+                  <div className="stat-info">
+                    <span className="stat-value">{stats.totalUsers}</span>
+                    <span className="stat-label">Regular Users</span>
+                  </div>
+                </div>
+                <div className="stat-card clickable" onClick={() => handleUserCardClick('admin')}>
+                  <div className="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
+                  <div className="stat-info">
+                    <span className="stat-value">{stats.totalAdmins}</span>
+                    <span className="stat-label">Total Admins</span>
+                  </div>
+                </div>
+                <div className="stat-card clickable" onClick={() => handleUserCardClick('superadmin')}>
+                  <div className="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                  </div>
+                  <div className="stat-info">
+                    <span className="stat-value">{stats.totalSuperAdmins}</span>
+                    <span className="stat-label">Super Admins</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </div>
+                  <div className="stat-info">
+                    <span className="stat-value">{stats.totalPosts}</span>
+                    <span className="stat-label">Total Posts</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                  </div>
+                  <div className="stat-info">
+                    <span className="stat-value">{stats.totalComments}</span>
+                    <span className="stat-label">Total Comments</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <polyline points="20 8 14 14 20 8"></polyline>
+                    </svg>
+                  </div>
+                  <div className="stat-info">
+                    <span className="stat-value">{stats.pendingRequests}</span>
+                    <span className="stat-label">Pending Requests</span>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </section>
+
+            <section className="join-requests-section">
+              <h2 className="section-title">Join Requests</h2>
+              {joinRequests.length === 0 ? (
+                <div className="no-requests-message">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <polyline points="20 8 14 14 20 8"></polyline>
+                  </svg>
+                  <p>No pending join requests</p>
+                </div>
+              ) : (
+                <div className="requests-grid">
+                  {joinRequests.map((request) => (
+                    <div key={request.id} className="request-card">
+                      <div className="request-info">
+                        <h3 className="request-name">{request.name}</h3>
+                        <div className="request-details">
+                          <p><strong>Phone:</strong> {request.phone}</p>
+                          <p><strong>Branch:</strong> {request.branch}</p>
+                          <p><strong>Year:</strong> {request.year}</p>
+                          <p><strong>Interest:</strong> {request.interest}</p>
+                          <p><strong>Applied:</strong> {new Date(request.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="request-actions">
+                        <button
+                          className="approve-button"
+                          onClick={() => handleApproveRequest(request.id, request.phone, request)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                          Approve
+                        </button>
+                        <button
+                          className="reject-button"
+                          onClick={() => handleRejectRequest(request.id)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="quick-actions">
+              <h2 className="section-title">Quick Actions</h2>
+              <div className="actions-grid">
+                <button className="action-button" onClick={() => navigate('/admin/posts')}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  Manage Posts
+                </button>
+                <button className="action-button" onClick={() => navigate('/admin/comments')}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                  Manage Comments
+                </button>
+                <button className="action-button" onClick={() => navigate('/admin/users')}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                  Manage Users
+                </button>
+              </div>
+            </section>
+          </>
         )}
-        </section>
 
-        <section className="quick-actions">
-          <h2 className="section-title">Quick Actions</h2>
-          <div className="actions-grid">
-            <button className="action-button" onClick={() => navigate('/admin/posts')}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              Manage Posts
-            </button>
-            <button className="action-button" onClick={() => navigate('/admin/comments')}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-              </svg>
-              Manage Comments
-            </button>
-            <button className="action-button" onClick={() => navigate('/admin/users')}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-              Manage Users
-            </button>
-      </div>
-        </section>
-
-        <section className="events-management-section">
-          <h2 className="section-title">Events Management</h2>
-          <div className="section-header">
-            <button className="add-event-button" onClick={() => setShowEventsModal(true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="16"></line>
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-              </svg>
-              Add New Event
-            </button>
-          </div>
-          <div className="events-grid">
-            {events.length === 0 ? (
-              <div className="no-events-message">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <p>No events added yet</p>
+        {activeTab === 'events' && (
+          <section className="events-management-section">
+            <div className="section-header">
+              <div className="events-controls">
+                <div className="search-box">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search events..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <select 
+                  className="sort-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="title">Title (A-Z)</option>
+                  <option value="seats">Available Seats</option>
+                </select>
               </div>
-            ) : (
-              events.map((event) => (
-                <div key={event.id} className="event-card">
-                  <div className="event-image">
-                    <img 
-                      src={event.image} 
-                      alt={event.title} 
-                      onError={(e) => {
-                        e.target.src = '/images/default-event.png';
-                      }}
-                    />
-                    <span className="event-category">
-                      {categories.find(cat => cat.value === event.category)?.icon || ''} {event.category}
-                    </span>
+              <button className="add-event-button" onClick={() => setShowEventsModal(true)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="16"></line>
+                  <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Add New Event
+              </button>
+            </div>
+            <div className="events-grid">
+              {filteredEvents.length === 0 ? (
+                <div className="no-events-message">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <p>No events found</p>
+                </div>
+              ) : (
+                filteredEvents.map((event) => (
+                  <div key={event.id} className="event-card">
+                    <div className="event-image">
+                      <img 
+                        src={event.image} 
+                        alt={event.title} 
+                        onError={(e) => {
+                          e.target.src = '/images/default-event.png';
+                        }}
+                      />
+                      <span className="event-category">
+                        {categories.find(cat => cat.value === event.category)?.icon || ''} {event.category}
+                      </span>
+                    </div>
+                    <div className="event-info">
+                      <h3>{event.title}</h3>
+                      <p className="event-description">{event.description}</p>
+                      <div className="event-details">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                          </svg>
+                          {event.formattedDate}
+                        </span>
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          {event.formattedTime}
+                        </span>
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                          </svg>
+                          {event.venue}
+                        </span>
+                      </div>
+                      <div className="event-stats">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                          </svg>
+                          {event.registrationFee === 0 ? 'Free' : `₹${event.registrationFee}`}
+                        </span>
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                          </svg>
+                          {event.availableSeats} seats available
+                        </span>
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                          </svg>
+                          {event.participants} registered
+                        </span>
+                      </div>
+                      <div className="event-actions">
+                        <button 
+                          className="delete-button"
+                          onClick={() => handleDeleteEvent(event.id)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="event-info">
-                    <h3>{event.title}</h3>
-                    <p className="event-description">{event.description}</p>
-                    <div className="event-details">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                          <line x1="16" y1="2" x2="16" y2="6"></line>
-                          <line x1="8" y1="2" x2="8" y2="6"></line>
-                          <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        {event.formattedDate}
-                      </span>
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        {event.formattedTime}
-                      </span>
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                          <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        {event.venue}
-                      </span>
-                    </div>
-                    <div className="event-stats">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="12" y1="1" x2="12" y2="23"></line>
-                          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                        {event.registrationFee === 0 ? 'Free' : `₹${event.registrationFee}`}
-                      </span>
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="9" cy="7" r="4"></circle>
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        {event.availableSeats} seats available
-                      </span>
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="9" cy="7" r="4"></circle>
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        {event.participants} registered
-                      </span>
-                    </div>
-                    <div className="event-actions">
-        <button 
-                        className="delete-button"
-                        onClick={() => handleDeleteEvent(event.id)}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M3 6h18"></path>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                        Delete
-        </button>
-                    </div>
+                ))
+              )}
+            </div>
+            {showEventsModal && <EventsModal />}
+          </section>
+        )}
+
+        {activeTab === 'users' && (
+          <section className="users-management-section">
+            <h2 className="section-title">Users Management</h2>
+            <div className="users-grid">
+              {allUsers.map((user) => (
+                <div key={user.id} className="user-card">
+                  <div className="user-info">
+                    <h3>{user.name}</h3>
+                    <p><strong>Email:</strong> {user.email}</p>
+                    <p><strong>Phone:</strong> {user.phone}</p>
+                    <p><strong>Branch:</strong> {user.branch}</p>
+                    <p><strong>Year:</strong> {user.year}</p>
+                    <p><strong>Status:</strong> <span className={`status-badge ${user.isApproved ? 'approved' : 'pending'}`}>
+                      {user.isApproved ? 'Approved' : 'Pending'}
+                    </span></p>
+                    <p><strong>Role:</strong> <span className={`role-badge ${user.isSuperAdmin ? 'super-admin' : user.isAdmin ? 'admin' : 'user'}`}>
+                      {user.isSuperAdmin ? 'Super Admin' : user.isAdmin ? 'Admin' : 'User'}
+                    </span></p>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-          {showEventsModal && <EventsModal />}
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
 
         {showUsersModal && <UsersModal />}
       </div>
