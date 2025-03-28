@@ -16,6 +16,8 @@ const Events = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
 
   useEffect(() => {
     try {
@@ -82,6 +84,90 @@ const Events = () => {
     return ['all', ...new Set(allEvents.map(event => event.category))];
   };
 
+  const handleRegisterClick = (event) => {
+    setSelectedEvent(event);
+    setShowRegistrationModal(true);
+  };
+
+  const RegistrationModal = () => {
+    if (!selectedEvent) return null;
+
+    return (
+      <div className="spec_modal_overlay" onClick={() => setShowRegistrationModal(false)}>
+        <div className="spec_modal_content" onClick={e => e.stopPropagation()}>
+          <div className="spec_modal_header">
+            <h2>{selectedEvent.title}</h2>
+            <button 
+              className="spec_modal_close"
+              onClick={() => setShowRegistrationModal(false)}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div className="spec_modal_body">
+            <div className="spec_event_image_wrap">
+              <img 
+                src={selectedEvent.image} 
+                alt={selectedEvent.title} 
+                className="spec_event_image"
+              />
+              <div className="spec_event_overlay">
+                <span className="spec_event_category">{selectedEvent.category}</span>
+                <span className="spec_seats_badge">
+                  {selectedEvent.availableSeats} seats left
+                </span>
+              </div>
+            </div>
+
+            <div className="spec_event_details">
+              <div className="spec_info_item">
+                <i className="far fa-calendar"></i>
+                <span>{selectedEvent.formattedDate}</span>
+              </div>
+              <div className="spec_info_item">
+                <i className="far fa-clock"></i>
+                <span>{selectedEvent.time}</span>
+              </div>
+              <div className="spec_info_item">
+                <i className="fas fa-map-marker-alt"></i>
+                <span>{selectedEvent.venue}</span>
+              </div>
+              <div className="spec_info_item">
+                <i className="fas fa-ticket-alt"></i>
+                <span>{selectedEvent.registrationFee === 0 ? 'Free Entry' : `₹${selectedEvent.registrationFee}`}</span>
+              </div>
+            </div>
+
+            <div className="spec_about_section">
+              <h3>About Event</h3>
+              <div className="spec_about_content">
+                {selectedEvent.aboutEvent}
+              </div>
+            </div>
+
+            <div className="spec_registration_section">
+              <h3>Registration</h3>
+              <p>Click the button below to register for this event:</p>
+              <a 
+                href={selectedEvent.googleFormLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="spec_register_button"
+              >
+                <i className="fas fa-external-link-alt"></i>
+                Register Now
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderEventCard = (event, isPast = false) => (
     <div className="spec_event_card" key={event.id}>
       <div className="spec_event_image_wrap">
@@ -132,10 +218,10 @@ const Events = () => {
               </div>
               <button 
                 className={`spec_register_btn ${event.availableSeats <= 0 ? 'spec_sold_out' : ''}`}
-                onClick={() => navigate(`/events/${event.id}`)}
+                onClick={() => handleRegisterClick(event)}
                 disabled={event.availableSeats <= 0}
               >
-                {event.availableSeats <= 0 ? 'Sold Out' : 'Register Now'}
+                {event.availableSeats <= 0 ? 'Sold Out' : 'View Details & Register'}
               </button>
             </div>
           ) : (
@@ -270,6 +356,7 @@ const Events = () => {
         </div>
       </main>
       <Footer />
+      {showRegistrationModal && <RegistrationModal />}
     </>
   );
 };
