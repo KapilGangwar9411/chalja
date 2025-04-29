@@ -28,7 +28,7 @@ const teamMembers = [
     name: 'Kapil Gangwar',
     title: 'Vice President',
     image: '/images/kapil.jpg',
-    instagram: 'https://www.instagram.com/brandup.creatives/?igsh=Y3hoZ3Q1dGU3eGt6',
+    instagram: 'https://www.instagram.com/_kapil.2?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
     linkedin: 'https://www.linkedin.com/in/kapil-gangwar-1bbb40251',
   },
 ];

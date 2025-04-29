@@ -9,6 +9,7 @@ import MovingText from './MovingText';
 import EventsContainer from './EventsContainer';
 import SocialMedia from './Social-Media/SocialMedia';
 import Footer from './Footer';
+import PhotoGallery from './PhotoGallery';
 import GalleryShowcase from './GalleryShowcase';
 
 const Home = () => {
@@ -65,8 +66,14 @@ const Home = () => {
         <About />
       </section>
 
-      <section id="gallery" className="section-container">
+      {/* Video Showcase Section */}
+      <section id="video-showcase" className="section-container">
         <GalleryShowcase />
+      </section>
+
+      {/* Photo Gallery Section */}
+      <section id="gallery" className="section-container">
+        <PhotoGallery />
       </section>
 
       {/* Team Section */}
@@ -74,12 +81,10 @@ const Home = () => {
         <TeamSection />
       </section>
 
-
       {/* Events Section */}
       <section id="events" className="section-container">
         <EventsContainer />
       </section>
-
 
       {/* Moving Text Section */}
       <section id="highlights" className="section-container">

@@ -10,7 +10,7 @@ const filmsData = [
     languages: '3 Languages',
     ageRating: 'U/A 16+',
     description: "A first-of-its-kind for her village, Babli takes up a bouncer's job to win over her love, leading to a series of funny and heart-warming events.",
-    videoUrl: 'videos/showreel.mp4', // Sample video URL
+    videoUrl: 'videos/showreel.mp4',
   },
   {
     title: 'Safar',
@@ -20,7 +20,7 @@ const filmsData = [
     languages: 'Hindi',
     ageRating: 'U',
     description: "A comedy series that revolves around the lives of the members of an upper-class Gujarati family in Mumbai.",
-    videoUrl: 'videos/showreel.mp4', // Sample video URL
+    videoUrl: 'videos/showreel.mp4',
   },
   {
     title: 'Safar',
@@ -40,14 +40,14 @@ const filmsData = [
     languages: 'Hindi',
     ageRating: 'U',
     description: "A hilarious comedy about a man dealing with the eccentricities of his five wives, each with distinct personalities.",
-    videoUrl: 'videos/showreel.mp4', // Sample video URL
+    videoUrl: 'videos/showreel.mp4',
   },
   // Add more films with their respective video URLs
 ];
 
 const FilmSection = () => {
   const [hoveredFilm, setHoveredFilm] = useState(null);
-  const [modalFilm, setModalFilm] = useState(null); // State to handle modal
+  const [modalFilm, setModalFilm] = useState(null);
 
   const handleMouseEnter = (film) => {
     setHoveredFilm(film);
