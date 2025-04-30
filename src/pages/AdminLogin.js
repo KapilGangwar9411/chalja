@@ -214,6 +214,18 @@ const AdminLogin = () => {
     }
   };
 
+  // Custom styles to fix input text visibility issue
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 15px',
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    transition: 'border-color 0.3s ease',
+    backgroundColor: 'white',
+    color: '#333'
+  };
+
   return (
     <div className="admin-login-container">
       <button className="back-button" onClick={() => navigate('/')}>
@@ -253,7 +265,7 @@ const AdminLogin = () => {
             <div className="input-group">
               <input
                 type="email"
-                className="admin-input"
+                style={inputStyle}
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -281,7 +293,7 @@ const AdminLogin = () => {
             <div className="input-group">
               <input
                 type="email"
-                className="admin-input"
+                style={inputStyle}
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -291,7 +303,7 @@ const AdminLogin = () => {
             <div className="input-group">
               <input
                 type="password"
-                className="admin-input"
+                style={inputStyle}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -302,7 +314,7 @@ const AdminLogin = () => {
               <div className="input-group">
                 <input
                   type="password"
-                  className="admin-input"
+                  style={inputStyle}
                   placeholder="Confirm Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

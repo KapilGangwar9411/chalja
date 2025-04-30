@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import './shortfilms.css';
 import FilmSection from './FilmSection';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faPlay, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import Footer from '../Footer';
 import Loader from '../Loader';
+import FilmSubmissionModal from './FilmSubmissionModal';
 
 const ShortFilms = () => {
   const [email, setEmail] = useState('');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const handleInputChange = (e) => {
     setEmail(e.target.value);
@@ -16,9 +19,21 @@ const ShortFilms = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSd1qJ5jFgtGPoXuNDG8RK5r7y9gRJJfiUJKK38UYW4zdv8SWg/viewform?usp=pp_url', '_blank');
-    // Optionally inform the user
-    alert('The Google Form has been opened in a new tab. Please fill it out and return here.');
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const toggleVideo = () => {
+    setIsVideoPlaying(!isVideoPlaying);
+  };
+
+  const scrollToFilms = () => {
+    document.getElementById('film-gallery').scrollIntoView({ 
+      behavior: 'smooth'
+    });
   };
 
   useEffect(() => {
@@ -27,57 +42,74 @@ const ShortFilms = () => {
     bgImage.onload = () => {
       setImageLoaded(true);
     };
+
+    // Add smooth scrolling behavior to the document
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
   }, []);
 
   return (
-    <div>
+    <div className="films-page">
       {!imageLoaded ? (
         <Loader />
       ) : (
-        <div
-          className="netflix-landing-container"
-          style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/film1.png)` }}
-        >
-          <header className="netflix-header">
-            <button className="back-btn" onClick={() => window.history.back()}>← Back</button>
-          </header>
-
-          {/* Hero section */}
-          <div className="hero-section">
-            <h1>Get a Chance to feature your film on Our website</h1>
-            <h2>Have a captivating short film? Submit it now!</h2>
-            <p>
-              Ready to showcase your film? Enter your email to begin the submission process and be part of
-              our exclusive collection of short films.
-            </p>
-
-            {/* Email form */}
-            <form className="email-form" onSubmit={handleSubmit}>
-              <input
-                type="email"
-                className="email-input"
-                placeholder="Email address"
-                value={email}
-                onChange={handleInputChange}
-                required
-              />
-              <button type="submit" className="get-started-btn">
-                Submit Film
+        <>
+          <div className="cinema-hero-section">
+            <div className="overlay"></div>
+            <video
+              className={`background-video ${isVideoPlaying ? 'playing' : ''}`}
+              loop
+              muted={!isVideoPlaying}
+              autoPlay
+              playsInline
+              src={`${process.env.PUBLIC_URL}/videos/C0232.MP4`}
+            ></video>
+            
+            <header className="films-header">
+              <button className="back-btn" onClick={() => window.history.back()}>
+                <span className="back-icon">←</span> <span className="back-text">Back</span>
               </button>
-            </form>
+              <button className="sound-toggle" onClick={toggleVideo}>
+                {isVideoPlaying ? 'Mute' : 'Unmute'}
+              </button>
+            </header>
 
-            {/* New text and icon */}
-            <div className="scroll-notice">
-              <p>Scroll down for the latest stuff</p>
-              <FontAwesomeIcon icon={faArrowDown} className="scroll-icon" />
+            <div className="hero-content">
+              <h1 className="hero-title">Showcase Your Cinematic Vision</h1>
+              <h2 className="hero-subtitle">Submit your film and join our curated collection</h2>
+              <p className="hero-description">
+                We're looking for unique storytellers with powerful voices. Get your short film featured on our platform and reach a wider audience.
+              </p>
+
+              <div className="cta-container">
+                <button className="submit-film-btn" onClick={handleSubmit}>
+                  <FontAwesomeIcon icon={faPlay} className="submit-icon" />
+                  <span>Submit Your Film</span>
+                </button>
+                <a href="#film-gallery" className="explore-btn">Explore Films</a>
+              </div>
+
+              <div className="scroll-indicator" onClick={scrollToFilms}>
+                <p>Discover our collection</p>
+                <div className="chevron-container">
+                  <FontAwesomeIcon icon={faChevronDown} className="chevron chevron-1" />
+                  <FontAwesomeIcon icon={faChevronDown} className="chevron chevron-2" />
+                  <FontAwesomeIcon icon={faChevronDown} className="chevron chevron-3" />
+                </div>
+              </div>
             </div>
           </div>
           
-          <div>
+          <div id="film-gallery" className="film-gallery-section">
             <FilmSection />
-            <Footer />
           </div>
-        </div>
+          
+          <Footer />
+
+          {showModal && <FilmSubmissionModal onClose={closeModal} />}
+        </>
       )}
     </div>
   );

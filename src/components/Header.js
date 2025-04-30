@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import JoinNowForm from './JoinNowForm';
+import '../assets/styles.css';
 
 const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if the current path is the short films page
+    const isShortFilmsPage = location.pathname.includes('/short-films');
+    setIsDarkTheme(isShortFilmsPage);
+  }, [location.pathname]);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -24,10 +33,14 @@ const Header = () => {
 
   return (
     <>
-      <header className="header">
+      <header className={`header ${isDarkTheme ? 'dark-theme' : ''}`}>
         <div className="logo-container">
-          <Link to="/" className="text-logo" onClick={closeNav}>
-            SPECTRUM
+          <Link to="/" className="logo-link" onClick={closeNav}>
+            <img 
+              src={isDarkTheme ? "/images/logo2.png" : "/images/logooo.png"} 
+              alt="Spectrum Logo" 
+              className="logo-image" 
+            />
           </Link>
         </div>
 

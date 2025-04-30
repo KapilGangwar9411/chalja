@@ -73,6 +73,25 @@ body {
 .logo-container {
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
+.logo-image {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
 }
 
 .text-logo {
@@ -85,13 +104,6 @@ body {
   text-decoration: none;
   transition: all 0.3s ease;
   letter-spacing: 1px;
-}
-
-.text-logo:hover {
-  transform: scale(1.05);
-  background: linear-gradient(45deg, #7a0404, #333);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .header-buttons {
@@ -189,27 +201,16 @@ nav ul li a {
   text-decoration: none;
   color: #333;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: color 0.3s ease;
   padding: 5px 0;
-}
-
-nav ul li a::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(45deg, #333, #7a0404);
-  transition: width 0.3s ease;
 }
 
 nav ul li a:hover {
   color: #7a0404;
 }
 
-nav ul li a:hover::after {
-  width: 100%;
+nav ul li a::after {
+  display: none;
 }
 
 @media (max-width: 1024px) {
@@ -291,30 +292,18 @@ nav ul li a:hover::after {
     padding: 10px 20px;
     color: #333;
     position: relative;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease;
     border-radius: 10px;
-  }
-
-  nav ul li a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(45deg, #333, #7a0404);
-    transform: translateY(-50%);
-    transition: width 0.3s ease;
   }
 
   nav ul li a:hover {
     color: #7a0404;
-    background: rgba(122, 4, 4, 0.05);
-    padding-left: 30px;
+    background: transparent;
+    padding-left: 20px;
   }
 
-  nav ul li a:hover::before {
-    width: 10px;
+  nav ul li a::before {
+    display: none;
   }
 
   .hamburger {
@@ -3174,4 +3163,66 @@ select.input-field {
     font-size: 0.85rem;
     margin-right: 50px;
   }
+}
+
+/* Dark Theme Header */
+.header.dark-theme {
+  background: rgba(15, 15, 15, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.header.dark-theme nav ul li a {
+  color: #fff;
+  transition: color 0.3s ease;
+}
+
+.header.dark-theme nav ul li a:hover {
+  color: #e50914;
+}
+
+.header.dark-theme .hamburger .bar {
+  background: linear-gradient(45deg, #fff, #e50914);
+}
+
+.header.dark-theme .hamburger:hover .bar {
+  background: linear-gradient(45deg, #e50914, #fff);
+}
+
+.header.dark-theme nav {
+  background: rgba(15, 15, 15, 0.98);
+}
+
+/* Mobile nav in dark theme */
+@media (max-width: 768px) {
+  .header.dark-theme nav ul li a:hover {
+    color: #e50914;
+    background: transparent;
+  }
+}
+
+/* Make sure the logo is visible on dark background */
+.header.dark-theme .logo-image {
+  filter: brightness(1.2);
+}
+
+/* Dark Theme Header Buttons */
+.header.dark-theme .admin-login-btn {
+  background: linear-gradient(45deg, #333333, #222222);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.header.dark-theme .admin-login-btn:hover {
+  background: linear-gradient(45deg, #222222, #333333);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.header.dark-theme .join-btn {
+  background: linear-gradient(45deg, #e50914, #b81d24);
+  box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+}
+
+.header.dark-theme .join-btn:hover {
+  background: linear-gradient(45deg, #b81d24, #e50914);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
 }

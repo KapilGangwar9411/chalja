@@ -8,232 +8,1293 @@
   --button-shadow: 0 8px 20px rgba(255, 107, 129, 0.5);
 }
 
-.films-page-container {
+/* Films Container */
+.films-container {
+  padding: 0 0 5rem 0;
+  color: white;
+  background: transparent;
+  position: relative;
+  font-family: 'Bricolage', sans-serif;
+  margin-top: 0;
+}
+
+/* Films Header Section */
+.films-header-section {
   text-align: center;
-  padding: 90px;
+  margin-bottom: 4rem;
+  padding: 5rem 2rem 0;
+  position: relative;
+  z-index: 3;
 }
 
-.films-section h1 {
-  color: #121212;
-  font-family: Bricolage;
-  font-weight: 600;
-  margin-bottom: 30px;
+.films-header-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(15, 15, 15, 0.9), rgba(15, 15, 15, 1));
+  z-index: -1;
+}
+
+.films-main-title {
   font-size: 3.5rem;
-  text-shadow: var(--text-shadow);
-  transition: color 0.3s, transform 0.3s;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
 }
 
-.films-section h1:hover {
-  color: #ff6347;
-  transform: scale(1.05);
+.accent-text {
+  background: linear-gradient(to right, #e50914, #ff4b2b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
+.films-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+/* Tabs */
+.films-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.tab-button {
+  font-family: 'Bricolage', sans-serif;
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tab-button.active {
+  background: rgba(229, 9, 20, 0.8);
+  border-color: transparent;
+}
+
+/* Films Grid */
 .films-grid {
-  margin-top: 10%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  justify-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 0 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
+/* Film Card */
 .film-card {
   position: relative;
-  width: 280px;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
-}
-
-.film-card img {
-  width: 100%;
-  height: 420px;
-  object-fit: cover;
-  border-radius: 20px;
+  background: rgba(30, 30, 30, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  height: 480px;
 }
 
 .film-card:hover {
-  transform: scale(1.2);
-  box-shadow: var(--box-shadow);
+  transform: translateY(-15px);
 }
 
-.film-info {
-  font-family: bricolage;
+.film-poster {
+  position: relative;
+  height: 360px;
+  overflow: hidden;
+}
+
+.film-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.film-card:hover .film-poster img {
+  transform: scale(1.1);
+}
+
+.featured-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(to right, #e50914, #ff4b2b);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.film-rating {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.star-icon {
+  color: #ffc107;
+}
+
+.film-basic-info {
+  padding: 1.5rem;
+}
+
+.film-basic-info h3 {
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.film-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.film-tag {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+}
+
+/* Hover Info Overlay */
+.film-hover-info {
   position: absolute;
   inset: 0;
-  background: var(--bg-color);
-  color: white;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
-  border-radius: 20px;
+  padding: 2rem;
   opacity: 0;
   transition: opacity 0.3s ease;
-  text-align: center;
+  animation: fadeIn 0.3s forwards;
+  overflow: auto;
 }
 
-.film-card:hover .film-info {
-  opacity: 1;
-}
-
-.film-info h2 {
+.film-hover-info h2 {
   font-size: 1.8rem;
-  margin: 0 0 10px;
-  font-weight: bold;
+  margin: 0 0 1rem;
+  font-weight: 600;
 }
 
-.film-info p {
-  margin: 5px 0;
+.film-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.film-director {
+  font-style: italic;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.film-description {
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  flex: 1;
   font-size: 1rem;
 }
 
-/* Modal styling */
-.modal2 {
+.watch-button {
+  font-family: 'Bricolage', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(to right, #e50914, #ff4b2b);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.watch-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(229, 9, 20, 0.3);
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  inset: 0;
-  backdrop-filter: blur(10px);
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  opacity: 0;
-  animation: fadeIn 0.5s forwards ease;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.9);
+  overflow: hidden;
 }
 
-.modal-content2 {
-  font-family: bricolage;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  padding: 40px;
-  border-radius: 20px;
-  width: 70%;
-  max-width: 800px;
+.modal.fullscreen {
+  padding: 0;
+}
+
+.modal-content {
   position: relative;
-  box-shadow: var(--box-shadow);
-  transform: translateY(-50px);
-  animation: slideUp 0.5s forwards 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 90%;
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 800px;
+  background-color: #141414;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
 }
 
-.modal-content2 h2 {
-  color: white;
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  font-weight: 500;
-  text-shadow: var(--text-shadow);
-}
-
-.close {
-  position: absolute;
-  top: 15px;
-  right: 25px;
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  cursor: pointer;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.close:hover {
-  color: var(--hover-color);
-  transform: rotate(180deg) scale(1.2);
-}
-
-.modal-content2 iframe {
+.netflix-style .modal-content {
   width: 100%;
-  height: 420px;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0;
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #0a0a0a;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  transition: opacity 0.3s ease;
+}
+
+.netflix-style .modal-header {
+  opacity: 0;
+  padding: 20px 30px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+}
+
+.netflix-style:hover .modal-header,
+.netflix-style.showing-controls .modal-header {
+  opacity: 1;
+}
+
+.modal-title {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-button {
+  background: transparent;
   border: none;
-  border-radius: 15px;
-  box-shadow: var(--box-shadow);
-  transition: transform 0.3s ease;
+  color: #999;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px;
+  line-height: 1;
 }
 
-.modal-content2 iframe:hover {
-  transform: scale(1.05);
+.close-button:hover {
+  color: white;
 }
 
-.film-info button {
-  font-family: bricolage;
-  background: var(--gradient);
+/* Video Container */
+.video-container {
+  position: relative;
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.fullscreen .video-container {
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Modal Controls */
+.modal-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 3;
+  transition: opacity 0.3s ease;
+}
+
+.netflix-style .modal-controls {
+  opacity: 0;
+  padding: 30px;
+}
+
+.netflix-style:hover .modal-controls,
+.netflix-style.showing-controls .modal-controls {
+  opacity: 1;
+}
+
+.modal-controls button {
+  background: none;
   border: none;
   color: white;
-  padding: 8px 20px;
-  border-radius: 10px;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 1.3rem;
-  letter-spacing: 1px;
-  margin-top: 20px;
-  transition: background 0.3s, transform 0.3s;
-  box-shadow: var(--button-shadow);
+  padding: 8px 12px;
+  margin: 0 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-.film-info button:hover {
-  background: linear-gradient(45deg, var(--hover-color), #ff6ba1);
-  transform: scale(1.1);
-  box-shadow: 0 12px 25px rgba(255, 107, 129, 0.7);
+.modal-controls button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
+.modal-controls .progress-container {
+  flex-grow: 1;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  margin: 0 15px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.progress-bar {
+  position: absolute;
+  height: 100%;
+  background-color: var(--primary-color);
+  width: 0;
+  transition: width 0.1s linear;
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 2;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Film Description in Modal */
+.film-description-modal {
+  padding: 20px;
+  color: #ddd;
+  max-height: 30%;
+  overflow-y: auto;
+  background-color: #1a1a1a;
+}
+
+.netflix-style .film-description-modal {
+  position: absolute;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  background: transparent;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 30px;
+  padding-top: 60px;
+  max-height: 40%;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.netflix-style:hover .film-description-modal,
+.netflix-style.showing-controls .film-description-modal {
+  opacity: 1;
+}
+
+/* Desktop specific styles */
+@media (min-width: 1024px) {
+  .modal-content {
+    width: 85%;
+    height: 85vh;
+    max-height: 850px;
+  }
+  
+  .video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-title {
+    font-size: 1.8rem;
+  }
+  
+  .film-description-modal {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  .modal-controls button {
+    font-size: 20px;
+    padding: 10px 15px;
+  }
+  
+  .modal-controls .progress-container {
+    height: 6px;
+  }
+}
+
+/* Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .modal-content {
+    width: 90%;
+    height: 90vh;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 0;
+  }
+  
+  .modal-header {
+    padding: 10px 15px;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem;
+  }
+  
+  .close-button {
+    font-size: 1.2rem;
+  }
+  
+  .modal-controls {
+    padding: 10px 15px;
+  }
+  
+  .modal-controls button {
+    font-size: 16px;
+    padding: 5px 8px;
+  }
+  
+  .film-description-modal {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+  
+  .netflix-style .film-description-modal {
+    padding: 15px;
+    padding-top: 40px;
+  }
+}
+
+/* Animations */
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
   to {
     opacity: 1;
   }
 }
 
-@keyframes slideUp {
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
   to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Responsiveness */
+/* Responsive Styles */
 @media (max-width: 1200px) {
   .films-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .film-card {
-    width: 100%;
-    margin-top: 20%;
-  }
-  .films-section {
-    margin-top: 5%;
-  }
 }
 
 @media (max-width: 768px) {
+  .films-main-title {
+    font-size: 2.5rem;
+  }
+  
+  .films-subtitle {
+    font-size: 1rem;
+  }
+  
   .films-grid {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: 1fr;
+    padding: 0 2rem;
   }
-  .film-card {
-    width: 160%;
-    margin-top: 30%;
+  
+  .films-tabs {
+    flex-wrap: wrap;
   }
-  .modal-content2 {
-    width: 90%;
-    padding: 20px;
+  
+  .modal-content {
+    width: 95%;
   }
-  .modal-content2 h2 {
-    font-size: 1.8rem;
-  }
-  .modal-content2 iframe {
-    height: 300px;
-  }
-  .film-info button {
-    font-size: 1.1rem;
-    padding: 10px 20px;
+  
+  .modal-header h2 {
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 480px) {
-  .films-section h1 {
-    font-size: 2.5rem;
+  .films-main-title {
+    font-size: 2rem;
   }
-  .film-info h2 {
+  
+  .tab-button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .film-card {
+    height: auto;
+  }
+  
+  .film-poster {
+    height: 250px;
+  }
+  
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+  
+  .modal-details {
+    padding: 1.5rem;
+  }
+  
+  .modal-header h2 {
     font-size: 1.5rem;
   }
-  .film-info p {
+  
+  .close-button {
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+  }
+}
+
+/* Add these Netflix-style player styles at the end of your CSS file */
+
+/* Netflix-style Film Modal */
+.netflix-film-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.netflix-film-modal.fullscreen {
+  padding: 0; /* No padding in fullscreen mode */
+}
+
+.netflix-modal-content {
+  background-color: #141414;
+  border-radius: 4px;
+  width: 85%;
+  max-width: 1100px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+  position: relative;
+  z-index: 100000;
+  margin: 0;
+}
+
+/* Update the fullscreen container styling to ensure proper positioning */
+.fullscreen .netflix-modal-content {
+  width: 100%;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100vh;
+  border-radius: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.netflix-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #0f0f0f;
+  border-bottom: 1px solid #333;
+}
+
+.netflix-modal-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 1.4rem;
+}
+
+.netflix-modal-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.netflix-modal-button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.netflix-modal-button:hover {
+  opacity: 0.7;
+}
+
+.netflix-video-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  background-color: #000;
+  min-height: 360px; /* Ensure minimum height on desktop */
+  overflow: visible; /* Changed from hidden to visible */
+  flex: 1 0 auto; /* Take available space but don't shrink */
+}
+
+.netflix-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+    width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Desktop specific adjustments */
+@media (min-width: 769px) {
+  .netflix-video-container {
+    min-height: 400px;
+    margin-bottom: 0;
+  }
+  
+  .netflix-film-details {
+    max-height: 30vh;
+    padding: 20px 30px;
+  }
+  
+  .fullscreen .netflix-video-container {
+    padding-top: 0;
+    height: 100vh;
+    min-height: 100vh;
+    margin-bottom: 0;
+  }
+  
+  .fullscreen .netflix-film-details {
+    display: none; /* Hide details in fullscreen mode */
+  }
+}
+
+.vimeo-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.netflix-video-controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 20%, transparent 65%, rgba(0,0,0,0.7) 100%);
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 20px 35px;
+  box-sizing: border-box;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.netflix-video-controls.hidden {
+  opacity: 0;
+}
+
+.netflix-video-controls.visible {
+  opacity: 1;
+}
+
+/* Make child elements receive pointer events */
+.netflix-top-controls,
+.netflix-center-controls,
+.netflix-bottom-controls,
+.netflix-play-button,
+.netflix-progress-bar,
+.netflix-control-button {
+  pointer-events: auto;
+}
+
+/* Ensure video controls appear above the video in fullscreen mode */
+.fullscreen .netflix-video-controls {
+  width: 100%;
+  height: 100%;
+  z-index: 100002; /* Higher than other elements in fullscreen */
+  padding-bottom: 45px; /* Even more padding on fullscreen */
+}
+
+.netflix-top-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.netflix-video-title {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.netflix-close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.netflix-close-button:hover {
+  opacity: 1;
+}
+
+.netflix-center-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.netflix-play-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.netflix-play-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.netflix-play-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.netflix-bottom-controls {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 15px; /* Added margin to move controls up */
+}
+
+.netflix-progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: height 0.2s ease;
+  margin-bottom: 5px; /* Added margin to create more space */
+}
+
+.netflix-progress-bar:hover {
+  height: 6px;
+}
+
+.netflix-progress-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.netflix-progress-filled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #e50914;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.netflix-controls-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  margin-top: 5px; /* Added to move controls up a bit */
+}
+
+.netflix-control-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  display: flex; /* Ensure icon is centered */
+  align-items: center;
+  justify-content: center;
+}
+
+.netflix-control-button:hover {
+  opacity: 1;
+}
+
+.netflix-control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.netflix-film-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+.netflix-title-small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.netflix-duration {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.netflix-film-details {
+  padding: 30px;
+  color: white;
+  overflow-y: auto; /* Add scrolling to details rather than entire modal */
+  max-height: 30vh; /* Limit height to maintain modal proportions */
+}
+
+.netflix-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.netflix-meta-info {
+  display: flex;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.netflix-year {
+  color: #ccc;
+}
+
+.netflix-age-rating {
+  border: 1px solid #ccc;
+  padding: 1px 5px;
+  font-size: 0.8rem;
+}
+
+.netflix-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.netflix-additional-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.netflix-additional-info p {
+  margin: 0;
+  color: #ccc;
+}
+
+.netflix-additional-info strong {
+  color: white;
+}
+
+.netflix-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  z-index: 9999;
+}
+
+.netflix-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #e50914;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.netflix-error-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.netflix-error-message p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.netflix-error-message p:first-child {
+  color: #e50914;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .netflix-film-modal {
+    padding: 70px 15px 15px; /* Smaller padding on mobile */
+  }
+  
+  .netflix-modal-content {
+    width: 95%;
+    max-height: calc(100vh - 80px);
+  }
+  
+  .netflix-video-title {
+    font-size: 1.2rem;
+  }
+  
+  .netflix-play-button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .netflix-film-details {
+    padding: 20px;
+  }
+  
+  .netflix-video-controls {
+    padding: 15px 15px 30px; /* More bottom padding on mobile */
+  }
+  
+  .netflix-bottom-controls {
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .netflix-film-modal {
+    padding: 50px 10px 10px; /* Even smaller padding on very small screens */
+  }
+  
+  .netflix-video-title {
+    font-size: 1rem;
+  }
+  
+  .netflix-play-button {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+  
+  .netflix-film-details {
+    padding: 15px;
+  }
+  
+  .netflix-description {
     font-size: 0.9rem;
   }
+  
+  .netflix-additional-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.netflix-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 99998; /* Just below the modal container */
+}
+
+/* Desktop adjustments */
+@media screen and (min-width: 1024px) {
+  .modal-content {
+    width: 85%;
+    max-width: 1400px;
+  }
+  
+  .video-container {
+    height: 0;
+    padding-top: 56.25%;
+  }
+  
+  .modal-description {
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media screen and (orientation: landscape) and (max-height: 768px) {
+  .modal-content {
+    max-height: 95vh;
+  }
+  
+  .video-container {
+    height: 0;
+    padding-top: 56.25%;
+  }
+}
+
+/* Ensure the modal has proper stacking in smaller viewports */
+@media (max-height: 700px) {
+  .netflix-film-modal {
+    padding-top: 70px;
+  }
+  
+  .netflix-modal-content {
+    max-height: 75vh;
+  }
+  
+  .netflix-film-details {
+    max-height: 20vh;
+    padding: 15px 30px;
+  }
+}
+
+/* Center the player inside the wrapper */
+.netflix-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Create a media query for portrait mobile devices */
+@media (max-width: 767px) and (orientation: portrait) {
+  .netflix-film-modal {
+    padding-top: 80px;
+  }
+  
+  .netflix-modal-content {
+    width: 92%;
+    max-height: 75vh;
+  }
+}
+
+/* Adjust video container height on small screens */
+@media (max-height: 600px) {
+  .netflix-video-container {
+    min-height: 300px; /* Lower minimum height on very small screens */
+  }
+  
+  .netflix-film-details {
+    max-height: 16vh; /* Reduce further on small screens */
+  }
+  
+  .netflix-controls-buttons {
+    margin-top: 2px; /* Less margin on small screens */
+  }
+}
+
+/* Add a dedicated exit fullscreen button */
+.fullscreen-exit-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: white;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100003; /* Higher than other controls */
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.2s ease;
+  pointer-events: auto;
+}
+
+.fullscreen .fullscreen-exit-button {
+  opacity: 0.7;
+}
+
+.fullscreen .fullscreen-exit-button:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Show exit button on mouse movement */
+.fullscreen .netflix-video-controls.visible + .fullscreen-exit-button,
+.fullscreen:hover .fullscreen-exit-button {
+  opacity: 0.7;
 }
