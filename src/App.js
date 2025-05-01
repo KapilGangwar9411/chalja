@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './assets/styles.css';
 import Home from './components/Home';
 import ShortFilms from './components/Short-Films/shortfilms';
@@ -113,6 +114,7 @@ function App() {
             </Layout>
           </Router>
           <Analytics />
+          <SpeedInsights />
         </Suspense>
       </ErrorBoundary>
     </HelmetProvider>
