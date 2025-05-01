@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Loader from './components/Loader';
+
+// Lazy load the main App component
+const App = lazy(() => import('./App'));
 
 // Preload critical CSS
 const preloadCriticalCSS = () => {
@@ -23,13 +26,29 @@ const preloadCriticalCSS = () => {
 preloadCriticalCSS();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Use StrictMode only in development
+if (process.env.NODE_ENV === 'development') {
+  root.render(
+    <React.StrictMode>
+      <Suspense fallback={<Loader />}>
+        <App />
+      </Suspense>
+    </React.StrictMode>
+  );
+} else {
+  root.render(
+    <Suspense fallback={<Loader />}>
+      <App />
+    </Suspense>
+  );
+}
+
+// Configure web vitals reporting
+reportWebVitals(metric => {
+  // Only send critical metrics to improve performance
+  if (metric.name === 'FCP' || metric.name === 'LCP' || metric.name === 'CLS') {
+    console.log(metric);
+    // You can send to an analytics endpoint here
+  }
+});

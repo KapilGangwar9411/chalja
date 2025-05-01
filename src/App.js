@@ -1,29 +1,31 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import './assets/styles.css';
-import Home from './components/Home';
-import ShortFilms from './components/Short-Films/shortfilms';
-import Events from './components/Events';
-import AboutFilmscreening from './components/About-Events/FimlScreening/AboutFilmscreening';
-import ArambhEvent from './components/About-Events/Arambh/ArambhEvent';
-import LightsCameraDiwali from './components/About-Events/Lights-Camera-Diwali/LightsCameraDiwali';
-import Nightphoto from './components/About-Events/Night-Photowalks/nightphoto';
-import Food from './components/About-Events/Food-donations/Food';
+import Loader from './components/Loader';
+import ErrorBoundary from './components/ErrorBoundary';
+import Header from './components/Header';
+import { setupSuperAdmin } from './utils/setupSuperAdmin';
+import { HelmetProvider } from 'react-helmet-async';
 import ImagePreloader from './components/ImagePreloader';
 import FontPreloader from './components/FontPreloader';
-import Header from './components/Header';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import LcDiwali from './pages/LcDiwali';
-import Signup from './pages/Signup';
-import { setupSuperAdmin } from './utils/setupSuperAdmin';
-import ErrorBoundary from './components/ErrorBoundary';
-import Loader from './components/Loader';
-import VideoEditing from './components/VideoEditing/VideoEditing';
-import { HelmetProvider } from 'react-helmet-async';
+
+// Lazy load components
+const Home = lazy(() => import('./components/Home'));
+const ShortFilms = lazy(() => import('./components/Short-Films/shortfilms'));
+const Events = lazy(() => import('./components/Events'));
+const AboutFilmscreening = lazy(() => import('./components/About-Events/FimlScreening/AboutFilmscreening'));
+const ArambhEvent = lazy(() => import('./components/About-Events/Arambh/ArambhEvent'));
+const LightsCameraDiwali = lazy(() => import('./components/About-Events/Lights-Camera-Diwali/LightsCameraDiwali'));
+const Nightphoto = lazy(() => import('./components/About-Events/Night-Photowalks/nightphoto'));
+const Food = lazy(() => import('./components/About-Events/Food-donations/Food'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
+const LcDiwali = lazy(() => import('./pages/LcDiwali'));
+const Signup = lazy(() => import('./pages/Signup'));
+const VideoEditing = lazy(() => import('./components/VideoEditing/VideoEditing'));
 
 // Error Page component
 const ErrorPage = () => (
@@ -70,10 +72,21 @@ function App() {
       console.error('Unhandled promise rejection:', event.reason);
     };
 
+    // Use requestIdleCallback for non-critical tasks
+    const loadNonCriticalResources = () => {
+      // You can load non-critical resources here
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(loadNonCriticalResources);
+    } else {
+      setTimeout(loadNonCriticalResources, 2000);
+    }
+
     // Simulate loading time for resources
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1000); // Reduced from 2000ms to 1000ms
 
     return () => {
       clearTimeout(timer);
@@ -95,20 +108,76 @@ function App() {
           <Router>
             <Layout>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/short-films" element={<ShortFilms />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/events/2" element={<AboutFilmscreening />} />
-                <Route path="/events/1" element={<ArambhEvent />} />
-                <Route path="/events/3" element={<LightsCameraDiwali />} />
-                <Route path="/events/4" element={<Nightphoto />} />
-                <Route path="/events/5" element={<Food />} />
-                <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/super-dashboard" element={<SuperAdminDashboard />} />
-                <Route path="/lcdiwali" element={<LcDiwali />} />
-                <Route path="/video-editing" element={<VideoEditing />} />
+                <Route path="/" element={
+                  <Suspense fallback={<Loader />}>
+                    <Home />
+                  </Suspense>
+                } />
+                <Route path="/short-films" element={
+                  <Suspense fallback={<Loader />}>
+                    <ShortFilms />
+                  </Suspense>
+                } />
+                <Route path="/events" element={
+                  <Suspense fallback={<Loader />}>
+                    <Events />
+                  </Suspense>
+                } />
+                <Route path="/events/2" element={
+                  <Suspense fallback={<Loader />}>
+                    <AboutFilmscreening />
+                  </Suspense>
+                } />
+                <Route path="/events/1" element={
+                  <Suspense fallback={<Loader />}>
+                    <ArambhEvent />
+                  </Suspense>
+                } />
+                <Route path="/events/3" element={
+                  <Suspense fallback={<Loader />}>
+                    <LightsCameraDiwali />
+                  </Suspense>
+                } />
+                <Route path="/events/4" element={
+                  <Suspense fallback={<Loader />}>
+                    <Nightphoto />
+                  </Suspense>
+                } />
+                <Route path="/events/5" element={
+                  <Suspense fallback={<Loader />}>
+                    <Food />
+                  </Suspense>
+                } />
+                <Route path="/admin-login" element={
+                  <Suspense fallback={<Loader />}>
+                    <AdminLogin />
+                  </Suspense>
+                } />
+                <Route path="/signup" element={
+                  <Suspense fallback={<Loader />}>
+                    <Signup />
+                  </Suspense>
+                } />
+                <Route path="/admin/dashboard" element={
+                  <Suspense fallback={<Loader />}>
+                    <AdminDashboard />
+                  </Suspense>
+                } />
+                <Route path="/admin/super-dashboard" element={
+                  <Suspense fallback={<Loader />}>
+                    <SuperAdminDashboard />
+                  </Suspense>
+                } />
+                <Route path="/lcdiwali" element={
+                  <Suspense fallback={<Loader />}>
+                    <LcDiwali />
+                  </Suspense>
+                } />
+                <Route path="/video-editing" element={
+                  <Suspense fallback={<Loader />}>
+                    <VideoEditing />
+                  </Suspense>
+                } />
                 <Route path="*" element={<ErrorPage />} />
               </Routes>
             </Layout>
