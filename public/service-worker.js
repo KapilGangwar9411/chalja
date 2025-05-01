@@ -1,3 +1,6 @@
+/* eslint-disable no-restricted-globals */
+/* global self */
+
 // Service Worker for aggressive caching and offline support
 const CACHE_NAME = 'spectrum-cache-v1';
 
@@ -8,7 +11,6 @@ const PRECACHE_ASSETS = [
   '/static/js/main.chunk.js',
   '/static/js/vendors.chunk.js',
   '/static/css/main.chunk.css',
-  '/static/media/logo.png',
   '/images/logooo.png',
   '/fonts/bricolage.ttf',
   '/fonts/anton.ttf'
@@ -36,6 +38,7 @@ self.addEventListener('activate', event => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName);
           }
+          return null;
         })
       );
     }).then(() => self.clients.claim())
