@@ -22,6 +22,7 @@
     "firebase": "^10.8.0",
     "framer-motion": "^11.5.6",
     "mini-svg-data-uri": "^1.4.4",
+    "node-cache": "^5.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
@@ -33,27 +34,34 @@
     "react-slick": "^0.30.1",
     "sharp": "^0.33.2",
     "slick-carousel": "^1.8.1",
+    "spdy": "^4.0.2",
     "tailwind-merge": "^2.2.1",
     "ttf2woff2": "^5.0.0",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "workbox-webpack-plugin": "^6.5.4"
   },
   "scripts": {
-    "start": "set GENERATE_SOURCEMAP=false && react-scripts start",
-    "build": "set GENERATE_SOURCEMAP=false && npm run optimize-images && react-scripts build && npm run postbuild",
-    "build:production": "set NODE_ENV=production && set GENERATE_SOURCEMAP=false && npm run analyze && npm run optimize-images && react-scripts build && npm run postbuild",
-    "postbuild": "node scripts/compress-assets.js",
-    "test": "react-scripts test",
+    "start": "set GENERATE_SOURCEMAP=false && react-app-rewired start",
+    "build": "set GENERATE_SOURCEMAP=false && npm run optimize-images && react-app-rewired build && npm run postbuild",
+    "build:production": "set NODE_ENV=production && set GENERATE_SOURCEMAP=false && cross-env INLINE_RUNTIME_CHUNK=true react-app-rewired build && npm run postbuild",
+    "postbuild": "node scripts/compress-assets.js && npx critters build/index.html",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "optimize-images": "mkdir -p scripts && node scripts/optimize-images.js",
-    "analyze": "source-map-explorer 'build/static/js/*.js' --html analyze-result.html",
-    "serve": "node server.js"
+    "analyze": "set ANALYZE=true && npm run build:production",
+    "serve": "node server.js",
+    "serve:prod": "set NODE_ENV=production && node server.js",
+    "generate-certs": "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -subj \"/CN=localhost\""
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "globals": {
+      "self": true
+    }
   },
   "browserslist": {
     "production": [
@@ -72,9 +80,12 @@
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-react": "^7.23.9",
     "autoprefixer": "^10.4.17",
+    "compression-webpack-plugin": "^11.1.0",
+    "critters": "^0.0.20",
     "cross-env": "^7.0.3",
     "postcss": "^8.4.35",
     "source-map-explorer": "^2.5.3",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "webpack-bundle-analyzer": "^4.10.1"
   }
 }
