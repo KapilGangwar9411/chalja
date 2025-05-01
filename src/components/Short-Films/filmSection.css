@@ -758,7 +758,7 @@
   position: absolute;
   top: 0;
   left: 0;
-    width: 100%;
+  width: 100%;
   height: 100%;
   z-index: 1;
   display: flex;
@@ -1297,4 +1297,125 @@
 .fullscreen .netflix-video-controls.visible + .fullscreen-exit-button,
 .fullscreen:hover .fullscreen-exit-button {
   opacity: 0.7;
+}
+
+/* Add platform badge styling */
+.platform-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  z-index: 2;
+}
+
+.platform-badge.youtube {
+  background-color: #ff0000;
+}
+
+/* Update video overlay and controls for the YouTube player */
+.netflix-video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.7) 100%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.netflix-video-overlay.show-controls {
+  opacity: 1;
+}
+
+.netflix-controls-container {
+  padding: 20px;
+}
+
+.netflix-progress-bar {
+  width: 100%;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  position: relative;
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+
+.netflix-progress-bar-filled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #E50914;
+  border-radius: 2px;
+}
+
+.netflix-controls {
+  display: flex;
+  align-items: center;
+}
+
+.netflix-control-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  margin-right: 15px;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.netflix-control-button:hover {
+  opacity: 1;
+}
+
+.netflix-film-title {
+  flex: 1;
+  color: white;
+  font-weight: 500;
+  margin: 0 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.netflix-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.netflix-close-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Both YouTube and Vimeo iframe styling */
+.youtube-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }

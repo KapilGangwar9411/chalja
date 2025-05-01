@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './filmSection.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faVolumeUp, faVolumeMute, faExpand, faCompress, faTimes } from '@fortawesome/free-solid-svg-icons';
-import VimeoPlayer from './VimeoPlayer';
+import YoutubePlayer from './YoutubePlayer';
 
 const NetflixModal = ({ film, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -194,122 +194,70 @@ const NetflixModal = ({ film, onClose }) => {
       <div className="netflix-modal-content">
         <div className="netflix-video-container">
           <div className="netflix-video-wrapper">
-            <VimeoPlayer
-              videoId={film.vimeoId}
+            <YoutubePlayer
+              videoId={film.youtubeId}
               isPlaying={isPlaying}
               isMuted={isMuted}
               onReady={handlePlayerReady}
               onError={handlePlayerError}
             />
-          </div>
-          
-          {/* Video Controls */}
-          <div className={`netflix-video-controls ${showControls ? 'visible' : 'hidden'}`}>
-            <div className="netflix-top-controls">
-              <h2 className="netflix-video-title">{film.title}</h2>
+            
+            {/* Video overlay for controls */}
+            <div className={`netflix-video-overlay ${showControls ? 'show-controls' : ''}`}>
               <button className="netflix-close-button" onClick={onClose}>
                 <FontAwesomeIcon icon={faTimes} />
               </button>
-            </div>
-            
-            <div className="netflix-center-controls">
-              <button 
-                className="netflix-play-button" 
-                onClick={togglePlay}
-                disabled={!playerReady || videoError}
-              >
-                <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-              </button>
-            </div>
-            
-            <div className="netflix-bottom-controls">
-              <div 
-                className="netflix-progress-bar" 
-                onClick={handleProgressClick}
-              >
-                <div className="netflix-progress-background"></div>
-                <div 
-                  className="netflix-progress-filled" 
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
               
-              <div className="netflix-controls-buttons">
-                <button 
-                  className="netflix-control-button" 
-                  onClick={togglePlay}
-                  disabled={!playerReady || videoError}
-                >
-                  <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-                </button>
-                
-                <button 
-                  className="netflix-control-button" 
-                  onClick={toggleMute}
-                  disabled={!playerReady || videoError}
-                >
-                  <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
-                </button>
-                
-                <div className="netflix-film-info">
-                  <span className="netflix-title-small">{film.title}</span>
-                  <span className="netflix-duration">{film.duration}</span>
+              <div className="netflix-controls-container">
+                <div className="netflix-progress-bar" onClick={handleProgressClick}>
+                  <div className="netflix-progress-bar-filled" style={{ width: `${progress}%` }}></div>
                 </div>
                 
-                <button 
-                  className="netflix-control-button" 
-                  onClick={toggleFullscreen}
-                >
-                  <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
-                </button>
+                <div className="netflix-controls">
+                  <button className="netflix-control-button" onClick={togglePlay}>
+                    <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+                  </button>
+                  
+                  <button className="netflix-control-button" onClick={toggleMute}>
+                    <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
+                  </button>
+                  
+                  <div className="netflix-film-title">
+                    {film.title}
+                  </div>
+                  
+                  <button className="netflix-control-button" onClick={toggleFullscreen}>
+                    <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-          
-          {/* Dedicated Exit Fullscreen Button (always visible in fullscreen) */}
-          {isFullscreen && (
-            <button 
-              className="fullscreen-exit-button" 
-              onClick={exitFullscreen}
-              aria-label="Exit fullscreen"
-              title="Exit fullscreen"
-            >
-              <FontAwesomeIcon icon={faCompress} />
-            </button>
-          )}
-          
-          {!playerReady && !videoError && (
-            <div className="netflix-loading">
-              <div className="netflix-spinner"></div>
-            </div>
-          )}
-          
-          {videoError && (
-            <div className="netflix-error-message">
-              <p>Error loading video: {videoError}</p>
-              <p>Please try again later or contact support.</p>
-            </div>
-          )}
         </div>
         
-        <div className="netflix-film-details">
-          <div className="netflix-details-header">
-            <div>
-              <h2>{film.title}</h2>
-              <div className="netflix-meta-info">
-                <span className="netflix-year">{film.year}</span>
-                <span className="netflix-age-rating">{film.ageRating}</span>
-                <span className="netflix-duration">{film.duration}</span>
+        <div className="netflix-film-info">
+          <div className="netflix-film-meta">
+            <div className="netflix-film-meta-row">
+              <div className="netflix-film-year">{film.year}</div>
+              <div className="netflix-film-duration">{film.duration}</div>
+              <div className="netflix-film-rating">{film.ageRating}</div>
+            </div>
+            
+            <div className="netflix-film-description">
+              {film.description}
+            </div>
+            
+            <div className="netflix-film-details">
+              <div className="netflix-film-detail">
+                <span className="detail-label">Director:</span> {film.director}
+              </div>
+              <div className="netflix-film-detail">
+                <span className="detail-label">Languages:</span> {film.languages}
+              </div>
+              <div className="netflix-film-detail">
+                <span className="detail-label">Genre:</span> {film.genre.join(', ')}
               </div>
             </div>
-          </div>
-          
-          <p className="netflix-description">{film.description}</p>
-          
-          <div className="netflix-additional-info">
-            <p><strong>Director:</strong> {film.director}</p>
-            <p><strong>Languages:</strong> {film.languages}</p>
-            <p><strong>Genre:</strong> {film.genre.join(', ')}</p>
           </div>
         </div>
       </div>

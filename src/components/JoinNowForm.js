@@ -401,16 +401,21 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
   const modalStyles = `
     .join-form-container {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --primary-color: #3d5af1;
-      --primary-light: #e6ebff;
+      --primary-color: #4361ee;
+      --primary-dark: #3a56d4;
+      --primary-light: #eef2ff;
+      --secondary-color: #6c63ff;
+      --accent-color: #f72585;
       --error-color: #e53935;
+      --success-color: #43a047;
       --text-color: #333;
       --text-light: #666;
       --bg-color: #fff;
-      --bg-light: #f5f7ff;
+      --bg-light: #f8faff;
       --border-color: #e0e0e0;
-      --border-radius: 8px;
-      --transition: all 0.2s ease;
+      --border-radius: 10px;
+      --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s ease;
       color: var(--text-color);
     }
     
@@ -420,29 +425,29 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 9999;
       padding: 16px;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
     }
     
     .modal-content {
       background-color: var(--bg-color);
       border-radius: var(--border-radius);
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       overflow: hidden;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+      box-shadow: var(--box-shadow);
       transform: translateY(0);
       transition: var(--transition);
       display: flex;
       flex-direction: column;
       opacity: 0;
-      animation: fadeIn 0.3s ease forwards;
+      animation: fadeIn 0.4s ease forwards, slideUp 0.5s ease forwards;
     }
     
     .modal-header {
@@ -450,10 +455,10 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       align-items: center;
       justify-content: space-between;
       padding: 24px 28px;
-      background: linear-gradient(120deg, #3d5af1, #2a41c5);
+      background: linear-gradient(120deg, #4361ee, #3a56d4);
       position: relative;
       overflow: hidden;
-      border-radius: 10px;
+      border-radius: 10px 10px 0 0;
     }
     
     .modal-header::after {
@@ -470,13 +475,13 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     
     .modal-title {
       margin: 0;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 600;
       color: white;
       position: relative;
       z-index: 1;
       letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       display: flex;
       align-items: center;
     }
@@ -487,15 +492,16 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       width: 24px;
       height: 24px;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'%3E%3C/path%3E%3Ccircle cx='9' cy='7' r='4'%3E%3C/circle%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'%3E%3C/path%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'%3E%3C/path%3E%3C/svg%3E");
-      margin-right: 10px;
+      margin-right: 12px;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
     }
     
     .close-button {
       background: rgba(255, 255, 255, 0.15);
       border: none;
       color: white;
-      height: 32px;
-      width: 32px;
+      height: 36px;
+      width: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -505,6 +511,7 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       position: relative;
       z-index: 1;
       backdrop-filter: blur(2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     
     .close-button:hover {
@@ -513,7 +520,7 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     }
     
     .form-body {
-      padding: 24px;
+      padding: 28px;
       overflow-y: auto;
       max-height: 70vh;
     }
@@ -521,67 +528,70 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     .form-step-header {
       display: flex;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     
     .step-indicator-bar {
       display: flex;
       width: 100%;
-      height: 4px;
-      background-color: var(--border-color);
+      height: 6px;
+      background-color: var(--bg-light);
       position: relative;
-      border-radius: 2px;
+      border-radius: 3px;
       overflow: hidden;
-      margin-top: 4px;
+      margin-top: 6px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     
     .step-progress {
       position: absolute;
       height: 100%;
-      background-color: var(--primary-color);
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 3px;
     }
     
     .step-title {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 600;
       color: var(--text-color);
       margin: 0 0 4px 0;
     }
     
     .step-subtitle {
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: var(--text-light);
       margin: 0;
     }
     
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     
     .form-group label {
       display: block;
       margin-bottom: 8px;
       font-weight: 500;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: var(--text-color);
     }
     
     .input-field {
       width: 100%;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border: 1px solid var(--border-color);
       border-radius: var(--border-radius);
       font-size: 0.95rem;
       transition: var(--transition);
       background-color: var(--bg-color);
       color: var(--text-color);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     
     .input-field:focus {
       outline: none;
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px var(--primary-light);
+      box-shadow: 0 0 0 3px var(--primary-light);
     }
     
     .input-field.error {
@@ -590,17 +600,18 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     }
     
     .input-field::placeholder {
-      color: #999;
+      color: #aaa;
     }
     
     .checkbox-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 10px;
+      gap: 12px;
+      padding: 14px;
       border: 1px solid var(--border-color);
       border-radius: var(--border-radius);
-      background-color: var(--bg-color);
+      background-color: var(--bg-light);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
     }
     
     .checkbox-group.error {
@@ -611,23 +622,31 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 0.95rem;
       cursor: pointer;
       user-select: none;
+      transition: var(--transition);
+      padding: 6px 8px;
+      border-radius: 4px;
+    }
+    
+    .checkbox-label:hover {
+      background-color: rgba(0, 0, 0, 0.02);
     }
     
     .checkbox-label input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border: 1px solid var(--border-color);
       border-radius: 4px;
       background-color: white;
       cursor: pointer;
       position: relative;
       transition: var(--transition);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     
     .checkbox-label input[type="checkbox"]:checked {
@@ -639,9 +658,9 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       content: '';
       position: absolute;
       top: 4px;
-      left: 6px;
+      left: 7px;
       width: 6px;
-      height: 9px;
+      height: 10px;
       border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
@@ -656,16 +675,25 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       color: var(--error-color);
       font-size: 0.75rem;
       margin-top: 6px;
+      animation: fadeIn 0.3s ease;
     }
     
     .error-message {
       background-color: rgba(229, 57, 53, 0.05);
       color: var(--error-color);
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: var(--border-radius);
       margin-bottom: 20px;
       font-size: 0.875rem;
       border-left: 3px solid var(--error-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .error-message::before {
+      content: "⚠️";
+      font-size: 1rem;
     }
     
     .form-nav-buttons {
@@ -676,24 +704,27 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     }
     
     .back-button {
-      padding: 9px 16px;
+      padding: 12px 20px;
       border: 1px solid var(--border-color);
-      background-color: transparent;
+      background-color: white;
       color: var(--text-color);
       border-radius: var(--border-radius);
       font-weight: 500;
       font-size: 0.875rem;
       cursor: pointer;
       transition: var(--transition);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     
     .back-button:hover {
-      background-color: rgba(0, 0, 0, 0.05);
+      background-color: var(--bg-light);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     }
     
     .next-button, .submit-button {
-      padding: 10px 20px;
-      background-color: var(--primary-color);
+      padding: 12px 24px;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
       color: white;
       border: none;
       border-radius: var(--border-radius);
@@ -701,17 +732,22 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       font-size: 0.875rem;
       cursor: pointer;
       transition: var(--transition);
-      min-width: 100px;
+      min-width: 120px;
       text-align: center;
+      box-shadow: 0 2px 6px rgba(67, 97, 238, 0.3);
     }
     
     .next-button:hover, .submit-button:hover {
-      background-color: #2a46e0;
+      background: linear-gradient(to right, #3a56d4, #6057e9);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
     }
     
     .next-button:disabled, .submit-button:disabled {
-      background-color: #c5c5c5;
+      background: #c5c5c5;
       cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
     }
     
     .button-content {
@@ -724,23 +760,27 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     .form-summary {
       background-color: var(--bg-light);
       border-radius: var(--border-radius);
-      padding: 16px;
+      padding: 20px;
       margin-top: 24px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
     }
     
     .form-summary h4 {
-      margin: 0 0 12px 0;
-      font-size: 0.95rem;
+      margin: 0 0 16px 0;
+      font-size: 1rem;
       color: var(--text-color);
       font-weight: 600;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding-bottom: 8px;
     }
     
     .summary-item {
       display: flex;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      font-size: 0.875rem;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      font-size: 0.9rem;
     }
     
     .summary-item:last-child {
@@ -768,38 +808,39 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.4s ease;
     }
     
     .popup-message {
       background-color: white;
-      padding: 32px;
+      padding: 36px;
       border-radius: var(--border-radius);
       text-align: center;
       max-width: 90%;
       width: 440px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-      animation: slideUp 0.4s ease;
+      box-shadow: var(--box-shadow);
+      animation: slideUp 0.5s ease, scaleIn 0.4s ease;
     }
     
     .popup-message svg {
-      color: #4CAF50;
-      margin-bottom: 16px;
-      width: 48px;
-      height: 48px;
+      color: var(--success-color);
+      margin-bottom: 20px;
+      width: 64px;
+      height: 64px;
+      animation: scaleIn 0.5s ease 0.2s both;
     }
     
     .popup-message h1 {
-      margin: 0 0 8px 0;
+      margin: 0 0 12px 0;
       color: var(--text-color);
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       font-weight: 600;
     }
     
     .popup-message p {
       margin: 0;
       color: var(--text-light);
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     
     @keyframes fadeIn {
@@ -810,11 +851,22 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
     @keyframes slideUp {
       from { 
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
       }
       to { 
         opacity: 1;
         transform: translateY(0);
+      }
+    }
+    
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
       }
     }
     
@@ -834,22 +886,23 @@ const JoinNowForm = ({ isOpen, setIsOpen }) => {
       }
       
       .modal-header {
-        padding: 16px;
+        padding: 18px;
+        border-radius: 0;
       }
       
       .popup-message {
-        padding: 24px;
+        padding: 28px;
         width: 100%;
         max-width: calc(100% - 32px);
       }
       
       .form-nav-buttons {
         margin-top: auto;
-        padding-top: 20px;
+        padding-top: 24px;
       }
       
       .checkbox-group {
-        padding: 8px;
+        padding: 10px;
       }
     }
     

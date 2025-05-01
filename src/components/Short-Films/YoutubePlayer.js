@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './VimeoPlayer.css';
+import './player.css'; // Use the new player CSS file
 
-const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
+const YoutubePlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
   const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,44 +9,34 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
   const playerRef = useRef(null);
   const containerRef = useRef(null);
   
-  // Function to extract Vimeo ID from URL or use ID directly
-  const getVimeoId = (idOrUrl) => {
+  // Function to extract YouTube ID from URL or use ID directly
+  const getYoutubeId = (idOrUrl) => {
     if (!idOrUrl) return null;
     
-    // If it's a number or numeric string, it's already an ID
-    if (/^\d+$/.test(idOrUrl)) {
+    // If it doesn't contain '/' or ':', it's probably already an ID
+    if (!/[/:.]/.test(idOrUrl)) {
       return idOrUrl;
     }
     
-    // Extract ID from URL
-    const match = idOrUrl.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/|vimeo\.com\/video\/)(\d+)/);
-    return match ? match[1] : idOrUrl;
+    // Extract ID from various YouTube URL formats
+    const match = idOrUrl.match(/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : null;
   };
 
   // Get proper ID
-  const vimeoId = getVimeoId(videoId);
+  const youtubeId = getYoutubeId(videoId);
   
   // Create embed URL with parameters
-  const embedUrl = vimeoId 
-    ? `https://player.vimeo.com/video/${vimeoId}?autoplay=${isPlaying ? 1 : 0}&muted=${isMuted ? 1 : 0}&controls=1&responsive=1&dnt=1&portrait=0&title=0&byline=0&transparent=1&quality=auto&maxheight=100%&badge=0&autopause=0&background=1&playsinline=1&pip=0`
+  const embedUrl = youtubeId 
+    ? `https://www.youtube.com/embed/${youtubeId}?autoplay=${isPlaying ? 1 : 0}&mute=${isMuted ? 1 : 0}&controls=0&enablejsapi=1&modestbranding=1&playsinline=1&rel=0&showinfo=0`
     : '';
-  
-  // Detect if on desktop browser
-  const isDesktop = typeof window !== 'undefined' && 
-    !(navigator.userAgent.match(/Android/i) || 
-      navigator.userAgent.match(/webOS/i) || 
-      navigator.userAgent.match(/iPhone/i) || 
-      navigator.userAgent.match(/iPad/i) || 
-      navigator.userAgent.match(/iPod/i) || 
-      navigator.userAgent.match(/BlackBerry/i) || 
-      navigator.userAgent.match(/Windows Phone/i));
   
   // Handle iframe load and error
   useEffect(() => {
     if (!embedUrl) {
-      setError('Invalid Vimeo ID');
+      setError('Invalid YouTube ID');
       setLoading(false);
-      if (onError) onError('Invalid Vimeo ID');
+      if (onError) onError('Invalid YouTube ID');
       return;
     }
     
@@ -58,14 +48,12 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
       setError(null);
       
       // Create simple interface for controlling the iframe
-      // This ensures compatibility with desktop and mobile
       if (iframeRef.current) {
         playerRef.current = {
           play: () => {
             try {
-              // Some browsers may block this method without user interaction
               if (iframeRef.current.contentWindow) {
-                iframeRef.current.contentWindow.postMessage({ method: 'play', value: '' }, '*');
+                iframeRef.current.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
               }
             } catch (err) {
               console.error('Error calling play:', err);
@@ -74,7 +62,7 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
           pause: () => {
             try {
               if (iframeRef.current.contentWindow) {
-                iframeRef.current.contentWindow.postMessage({ method: 'pause', value: '' }, '*');
+                iframeRef.current.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
               }
             } catch (err) {
               console.error('Error calling pause:', err);
@@ -83,7 +71,7 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
           setCurrentTime: (seconds) => {
             try {
               if (iframeRef.current.contentWindow) {
-                iframeRef.current.contentWindow.postMessage({ method: 'setCurrentTime', value: seconds }, '*');
+                iframeRef.current.contentWindow.postMessage(`{"event":"command","func":"seekTo","args":[${seconds}, true]}`, '*');
               }
             } catch (err) {
               console.error('Error setting current time:', err);
@@ -92,7 +80,8 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
           setVolume: (volume) => {
             try {
               if (iframeRef.current.contentWindow) {
-                iframeRef.current.contentWindow.postMessage({ method: 'setVolume', value: volume }, '*');
+                const volumePercent = volume * 100;
+                iframeRef.current.contentWindow.postMessage(`{"event":"command","func":"setVolume","args":[${volumePercent}]}`, '*');
               }
             } catch (err) {
               console.error('Error setting volume:', err);
@@ -180,8 +169,7 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
     }
   }, [isMuted, loaded]);
   
-  // On desktop browsers, we need to ensure proper aspect ratio
-  // and handle fullscreen mode properly
+  // Listen for fullscreen change
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isFullscreen = 
@@ -200,71 +188,47 @@ const VimeoPlayer = ({ videoId, isPlaying, isMuted, onReady, onError }) => {
     
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('msfullscreenchange', handleFullscreenChange);
-    
-    // Set a key attribute to force iframe refresh when needed on desktop
-    if (isDesktop && iframeRef.current) {
-      const refreshInterval = setInterval(() => {
-        if (iframeRef.current && document.visibilityState === 'visible' && !isPlaying) {
-          const currentSrc = iframeRef.current.src;
-          iframeRef.current.src = '';
-          setTimeout(() => {
-            if (iframeRef.current) {
-              iframeRef.current.src = currentSrc;
-            }
-          }, 50);
-        }
-      }, 300000); // Every 5 minutes, only when page is visible and video is paused
-      
-      return () => {
-        clearInterval(refreshInterval);
-        document.removeEventListener('fullscreenchange', handleFullscreenChange);
-        document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.removeEventListener('msfullscreenchange', handleFullscreenChange);
-      };
-    }
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
-  }, [isDesktop, isPlaying]);
+  }, []);
   
   return (
     <div 
       ref={containerRef}
-      className={`vimeo-player-container ${isDesktop ? 'desktop' : 'mobile'} aspect-16-9`}
-      style={{height: '100%', paddingBottom: 0}}
+      className={`youtube-player-container ${loading ? 'loading' : ''}`}
     >
-      {!error ? (
-        <>
-          {loading && (
-            <div className="vimeo-loading">
-              <div className="spinner"></div>
-              <p>Loading video...</p>
-            </div>
-          )}
-          <iframe
-            ref={iframeRef}
-            src={embedUrl}
-            className="vimeo-iframe"
-            frameBorder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-            title="Vimeo Player"
-            loading="lazy"
-          />
-        </>
-      ) : (
-        <div className="vimeo-error">
-          <h3>Video Unavailable</h3>
-          <p>{error}</p>
-          <p>Please try again later or contact support if the issue persists.</p>
+      {loading && (
+        <div className="video-loader">
+          <div className="loader-spinner"></div>
         </div>
+      )}
+      
+      {error && (
+        <div className="video-error">
+          <p>{error}</p>
+        </div>
+      )}
+      
+      {embedUrl && (
+        <iframe
+          ref={iframeRef}
+          src={embedUrl}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          title="YouTube video player"
+          className="youtube-iframe"
+        ></iframe>
       )}
     </div>
   );
 };
 
-export default VimeoPlayer; 
+export default YoutubePlayer; 

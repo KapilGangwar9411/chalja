@@ -31,6 +31,35 @@ const Header = () => {
     setIsFormOpen(true);
   };
 
+  const scrollToTeam = (e) => {
+    e.preventDefault();
+    closeNav();
+    
+    // If we're on the home page, scroll to the team section
+    if (location.pathname === '/') {
+      const teamSection = document.getElementById('team');
+      if (teamSection) {
+        window.scrollTo({
+          top: teamSection.offsetTop,
+          behavior: 'smooth'
+        });
+      }
+    } else {
+      // If not on home page, navigate to home and then scroll to team section
+      navigate('/');
+      // We need to wait for the page to load before scrolling
+      setTimeout(() => {
+        const teamSection = document.getElementById('team');
+        if (teamSection) {
+          window.scrollTo({
+            top: teamSection.offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    }
+  };
+
   return (
     <>
       <header className={`header ${isDarkTheme ? 'dark-theme' : ''}`}>
@@ -49,7 +78,7 @@ const Header = () => {
             <li><Link to="/" onClick={closeNav}>Home</Link></li>
             <li><Link to="/events" onClick={closeNav}>Events</Link></li>
             <li><Link to="/short-films" onClick={closeNav}>Short Films</Link></li>
-            <li><Link to="/TeamSection" onClick={closeNav}>Team</Link></li>
+            <li><a href="#team" onClick={scrollToTeam}>Team</a></li>
           </ul>
         </nav>
 

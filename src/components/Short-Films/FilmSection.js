@@ -2,15 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import './filmSection.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faStar, faCalendarDay, faClock, faGlobe, faVolumeUp, faVolumeMute, faExpand, faPause } from '@fortawesome/free-solid-svg-icons';
-import VimeoPlayer from './VimeoPlayer';
+import YoutubePlayer from './YoutubePlayer';
 import NetflixModal from './NetflixModal';
 
-// Sample film data with Vimeo links
+// Sample film data with YouTube links
 const filmsData = [
   {
     id: 1,
-    title: 'Safar',
-    image: `${process.env.PUBLIC_URL}/images/Safar.png`,
+    title: 'Engineering Days',
+    image: `${process.env.PUBLIC_URL}/images/EngineeringDays.jpg`,
     year: '2024',
     duration: '8 min',
     languages: 'Hindi, English',
@@ -19,7 +19,8 @@ const filmsData = [
     rating: 4.8,
     genre: ['Drama', 'Coming of Age'],
     description: "A young photographer discovers herself through a soul-searching journey across rural India, capturing the essence of humanity along the way.",
-    vimeoId: '1080297620',
+    youtubeId: '6OEOrHkTmHI', // Replace with your actual YouTube ID
+    videoType: 'youtube',
     featured: true
   },
   {
@@ -34,7 +35,8 @@ const filmsData = [
     rating: 4.5,
     genre: ['Sci-Fi', 'Thriller'],
     description: "When a sound engineer discovers a frequency that allows him to hear conversations from the past, he becomes obsessed with changing history.",
-    vimeoId: 'https://vimeo.com/1080297620/bec13abdfe',
+    youtubeId: 'Fx7vGRKj0oA', // Replace with your actual YouTube ID
+    videoType: 'youtube',
     featured: true
   },
   {
@@ -49,7 +51,8 @@ const filmsData = [
     rating: 4.8,
     genre: ['Drama', 'Coming of Age'],
     description: "A young photographer discovers herself through a soul-searching journey across rural India, capturing the essence of humanity along the way.",
-    vimeoId: '76979871',
+    youtubeId: 'SM_UvmfGqbA', 
+    videoType: 'youtube',
     featured: true
   }
 ];
@@ -283,6 +286,7 @@ const FilmSection = () => {
             <div className="film-poster">
               <img src={film.image} alt={film.title} />
               {film.featured && <div className="featured-badge">Featured</div>}
+              <div className="platform-badge youtube">YouTube</div>
               <div className="film-rating">
                 <FontAwesomeIcon icon={faStar} className="star-icon" />
                 <span>{film.rating}</span>
